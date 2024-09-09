@@ -1,6 +1,6 @@
 const User = require("../models/userModel");
 const Hospital = require("../models/hospitalModel");
-
+//This is a comment
 const createUser = async (req, res) => {
   const { name, dob, email, location } = req.body;
   const emptyFields = [];
