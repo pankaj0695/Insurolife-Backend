@@ -100,7 +100,7 @@ const acceptOrDeclineRequest = async (req, res) => {
     if (!_id) {
       return res.status(404).json({ message: "Request Does not Exist" });
     }
-    if (!status || status != "Accepted" || status != "Declined") {
+    if (!status || (status != "Accepted" && status != "Declined")) {
       return res.status(400).json({ message: "Invalid Status" });
     }
     const updateRequest = await Request.findByIdAndUpdate(

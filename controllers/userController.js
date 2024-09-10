@@ -23,7 +23,7 @@ const createUser = async (req, res) => {
   }
 
   const existingEmail = await User.find({ email });
-  if (existingEmail) {
+  if (existingEmail.length !== 0) {
     return res.status(400).json({ message: "Email is already registered" });
   }
 

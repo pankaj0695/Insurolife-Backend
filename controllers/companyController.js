@@ -78,6 +78,12 @@ const createCompany = async (req, res) => {
     return res.status(400).json({ message: "Please Enter In All The Fields" });
   }
   try {
+    const existingName = await Company.findOne({ company_name });
+    if (existingName) {
+      return res
+        .status(400)
+        .json({ message: "Company with this name already exists" });
+    }
     const company = await Company.create({ company_name });
     res.status(200).json({ company });
   } catch (error) {
@@ -101,9 +107,13 @@ const createInsurance = async (req, res) => {
     emptyFields.push("EMI");
   }
   if (emptyFields.length > 0) {
-    res.status(400).json({ message: "Please Enter In All The Fields" });
+    return res.status(400).json({ message: "Please Enter In All The Fields" });
   }
   try {
+    const existingInsuranceName = await Insurance.findOne({ insurance_name });
+    if (existingInsuranceName) {
+      return res.status(400).json({ message: "Insurance Already Exists" });
+    }
     const insurance = await Insurance.create({
       insurance_name,
       claim,
