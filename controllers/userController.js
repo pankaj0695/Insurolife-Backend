@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const Hospital = require("../models/hospitalModel");
 const Appointment = require("../models/appointmentModel");
+const Rating = require("../models/ratingModel");
 //This is a comment
 const createUser = async (req, res) => {
   const { name, dob, email, location } = req.body;
@@ -128,5 +129,53 @@ const bookAppointment = async (req, res) => {
 
   await User.findByIdAndUpdate(user_id, { appointments: newAppointment });
 };
+const giveRatings = async (req, res) => {
+  const { user_id, hospital_id, rating } = req.body;
+  const emptyFields = [];
+  if (!user_id) {
+    emptyFields.push("User ID");
+  }
+  if (!hospital_id) {
+    emptyFields.push("Hospital ID");
+  }
+  if (!rating) {
+    emptyFields.push("Rating");
+  }
+  if (emptyFields.length !== 0) {
+    return res
+      .status(400)
+      .json({ message: "Please Enter in all the Fields", emptyFields });
+  }
 
-module.exports = { createUser, getNearbyHospital, bookAppointment };
+  const existingRating = await Rating.findOne({ user_id, hospital_id });
+  if (existingRating) {
+    return res
+      .status(400)
+      .json({ message: "You can't Rate Twice or Change the Rating" });
+  }
+  try {
+    const userRate = await Rating.create({ user_id, hospital_id, rating });
+    const hospital = await Hospital.findOne({ _id: hospital_id });
+    if (!userRate) {
+      return res.status(500).json({ message: "Some Error Occured" });
+    }
+    if (!hospital) {
+      return res.status(500).json({ message: "Some Error Occured" });
+    }
+
+    const totalRatings = hospital.avgRating * hospital.ratingCount;
+    hospital.ratingCount++;
+    hospital.avgRating = (totalRatings + Number(rating)) / hospital.ratingCount;
+    hospital.save();
+    return res.status(200).json({ message: "Thank-you For Rating" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  createUser,
+  getNearbyHospital,
+  bookAppointment,
+  giveRatings,
+};

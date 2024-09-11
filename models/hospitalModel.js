@@ -20,6 +20,14 @@ const hospitalSchema = new schema({
       ref: "Request",
     },
   ],
+  ratingCount: {
+    type: Number,
+    default: 0,
+  },
+  avgRating: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("Hospital", hospitalSchema);

@@ -121,7 +121,10 @@ const acceptOrDeclineRequest = async (req, res) => {
   }
 };
 
+//Incomplete Appointment Function
 const getAllAppointments = async (req, res) => {};
+
+//Incomplete Appointment Function
 const acceptOrDeclineAppointment = async (req, res) => {
   //User will select timing
   //User will provide description

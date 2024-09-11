@@ -4,9 +4,11 @@ const {
   createUser,
   getNearbyHospital,
   bookAppointment,
+  giveRatings,
 } = require("../controllers/userController");
 
 router.post("/", createUser);
+router.post("/hospital_id/ratings", giveRatings);
 router.get("/user_id", getNearbyHospital);
 router.post("/user_id/book-appointment", bookAppointment);
 

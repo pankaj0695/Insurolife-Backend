@@ -13,7 +13,7 @@ const appointmentSchema = new schema(
       type: String,
     },
     date: {
-      type: Date,
+      type: String,
       validate: {
         validator: function (v) {
           return /^\d{2}-\d{2}-\d{4}$/.test(v);
