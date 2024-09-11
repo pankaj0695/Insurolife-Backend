@@ -5,10 +5,12 @@ const {
   createHospital,
   acceptOrDeclineRequest,
   getAllRequests,
+  acceptOrDeclineAppointment,
 } = require("../controllers/hospitalController");
 
 router.post("/", createHospital);
 router.patch("/notifications", acceptOrDeclineRequest);
 router.get("/notifications", getAllRequests);
 router.get("/:hospital_name", getInsurance);
+router.patch("/appointment-request", acceptOrDeclineAppointment);
 module.exports = router;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
-
+const Appointment = require("./appointmentModel");
 const medical_record = new schema({
   doctor: {
     type: String,
@@ -8,16 +8,6 @@ const medical_record = new schema({
   },
   diagnosis: {
     type: String,
-    required: true,
-  },
-});
-const appointment = new schema({
-  doctor: {
-    type: String,
-    required: true,
-  },
-  date_time: {
-    type: Date,
     required: true,
   },
 });
@@ -48,7 +38,10 @@ const userSchema = new schema({
     required: true,
   },
   medical_records: [medical_record],
-  appointments: appointment,
+  appointments: {
+    type: schema.Types.ObjectId,
+    ref: "Appointment",
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

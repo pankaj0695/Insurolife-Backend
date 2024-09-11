@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Hospital = require("../models/hospitalModel");
+const Appointment = require("../models/appointmentModel");
 //This is a comment
 const createUser = async (req, res) => {
   const { name, dob, email, location } = req.body;
@@ -69,5 +70,63 @@ const getNearbyHospital = async (req, res) => {
     res.status(200).json(nearbyHospitals);
   }
 };
+const bookAppointment = async (req, res) => {
+  //User will select timing
+  //User will provide description
+  //Appointment request will be sent
+  //Hospital will provide date and request will be accepted
+  //Hospital will allot a Doctor(Doctor Details Not Stored in db)
 
-module.exports = { createUser, getNearbyHospital };
+  const { user_id, hospital_id, timing, desc } = req.body;
+  const emptyFields = [];
+  if (!user_id) {
+    emptyFields.push("User ID");
+  }
+  const { appointments } = await User.findById(user_id, {
+    appointments: 1,
+    _id: 0,
+  });
+  if (appointments && appointments.status !== "Declined") {
+    return res
+      .status(400)
+      .json({ message: "An Appointment is already booked" });
+  }
+  if (!hospital_id) {
+    emptyFields.push("Hospital ID");
+  }
+  if (!timing) {
+    emptyFields.push("Timing");
+  }
+  if (!desc) {
+    emptyFields.push("Description");
+  }
+  if (emptyFields.length > 0) {
+    return res
+      .status(400)
+      .json({ message: "Please Enter in all the Fields", emptyFields });
+  }
+  const hospital = await Hospital.findById(hospital_id);
+  if (!hospital) {
+    return res.status(400).json({ message: "Hospital Doesn't Exist" });
+  }
+  const user = await User.findById(user_id);
+  if (!user) {
+    return res.status(400).json({ message: "User Doesn't Exist" });
+  }
+  const status = "Pending";
+  const newAppointment = await Appointment.create({
+    hospital_id,
+    timing,
+    userDescription: desc,
+    status,
+  });
+
+  if (!newAppointment) {
+    return res.status(500).json({ message: "Some Error Occured" });
+  }
+  res.status(200).json(newAppointment);
+
+  await User.findByIdAndUpdate(user_id, { appointments: newAppointment });
+};
+
+module.exports = { createUser, getNearbyHospital, bookAppointment };

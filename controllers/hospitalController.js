@@ -121,9 +121,23 @@ const acceptOrDeclineRequest = async (req, res) => {
   }
 };
 
+const getAllAppointments = async (req, res) => {};
+const acceptOrDeclineAppointment = async (req, res) => {
+  //User will select timing
+  //User will provide description
+  //Appointment request will be sent
+  //Hospital will either accept or decline the appointment request
+  //If declines then a message will be provided
+  //Hospital will provide date and request will be accepted
+  //Hospital will allot a Doctor(Doctor Details Not Stored in db)
+  const { hospital_id, status } = req.body;
+};
+
 module.exports = {
   getInsurance,
   createHospital,
   acceptOrDeclineRequest,
   getAllRequests,
+  getAllAppointments,
+  acceptOrDeclineAppointment,
 };
