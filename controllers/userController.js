@@ -4,7 +4,7 @@ const Appointment = require("../models/appointmentModel");
 const Rating = require("../models/ratingModel");
 //This is a comment
 const createUser = async (req, res) => {
-  const { name, dob, email, location } = req.body;
+  const { name, dob, email, city, state } = req.body;
   const emptyFields = [];
   if (!name) {
     emptyFields.push("Name");
@@ -15,8 +15,11 @@ const createUser = async (req, res) => {
   if (!email) {
     emptyFields.push("Email");
   }
-  if (!location) {
-    emptyFields.push("Location");
+  if (!city) {
+    emptyFields.push("City");
+  }
+  if (!state) {
+    emptyFields.push("State");
   }
   if (emptyFields.length > 0) {
     return res
@@ -30,26 +33,27 @@ const createUser = async (req, res) => {
   }
 
   try {
-    const user = await User.create({ name, dob, email, location });
+    const user = await User.create({ name, dob, email, city, state });
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 const getNearbyHospital = async (req, res) => {
-  const { email, location } = req.body;
+  const { email, city, state } = req.body;
   //For user's location
-  if (!location) {
+  if (!city && !state) {
     if (!email) {
-      res.status(400).json({ message: "Some Error Occured" });
+      return res.status(400).json({ message: "Some Error Occured" });
     }
-    const userLocation = (
-      await User.findOne({ email }, { location: 1, _id: 0 })
-    ).location;
-    if (!userLocation) {
-      res.status(400).json({ message: "Some Error Occured" });
+    const { city: userCity } = await User.findOne(
+      { email },
+      { city: 1, _id: 0 }
+    );
+    if (!userCity) {
+      return res.status(400).json({ message: "Some Error Occured" });
     }
-    const nearbyHospitals = await Hospital.find({ location: userLocation });
+    const nearbyHospitals = await Hospital.find({ city: userCity });
     if (nearbyHospitals.length === 0) {
       return res
         .status(200)
@@ -59,10 +63,10 @@ const getNearbyHospital = async (req, res) => {
   }
   //for location provided through filter
   else {
-    if (!location) {
-      res.status(400).json({ message: "Some Error Occured" });
+    if (!city && !state) {
+      return res.status(400).json({ message: "Some Error Occured" });
     }
-    const nearbyHospitals = await Hospital.find({ location });
+    const nearbyHospitals = await Hospital.find({ city, state });
     if (nearbyHospitals.length === 0) {
       return res
         .status(200)

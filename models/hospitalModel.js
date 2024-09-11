@@ -7,7 +7,11 @@ const hospitalSchema = new schema({
     type: String,
     required: true,
   },
-  location: {
+  city: {
+    type: String,
+    required: true,
+  },
+  state: {
     type: String,
     required: true,
   },

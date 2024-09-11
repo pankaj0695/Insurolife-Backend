@@ -39,13 +39,16 @@ const getInsurance = async (req, res) => {
 
 //Create a Hospital profile
 const createHospital = async (req, res) => {
-  const { hospital_name, location } = req.body;
+  const { hospital_name, city, state } = req.body;
   let emptyFields = [];
   if (!hospital_name) {
     emptyFields.push("Hospital Name");
   }
-  if (!location) {
-    emptyFields.push("Location");
+  if (!city) {
+    emptyFields.push("city");
+  }
+  if (!state) {
+    emptyFields.push("state");
   }
   if (emptyFields.length > 0) {
     return res
@@ -55,7 +58,7 @@ const createHospital = async (req, res) => {
 
   //adding to db
   try {
-    const hospital = await Hospital.create({ hospital_name, location });
+    const hospital = await Hospital.create({ hospital_name, city, state });
     res.status(200).json(hospital);
   } catch (error) {
     res.status(400).json({ error: error.message });
