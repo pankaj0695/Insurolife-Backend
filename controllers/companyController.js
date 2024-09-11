@@ -126,4 +126,69 @@ const createInsurance = async (req, res) => {
   }
 };
 
-module.exports = { sendRequest, createCompany, createInsurance };
+const pendingRequest = async (req, res) => {
+  const { company_id } = req.body;
+  if (!company_id) {
+    return res.status(400).json({ message: "Please Provide The Company ID" });
+  }
+  try {
+    const requests = await Request.find({ company_id, status: "Pending" });
+    if (requests.length === 0) {
+      const company = await Company.findOne({ _id: company_id });
+      if (!company) {
+        return res.status(400).json({ message: "Company Doesn't Exist" });
+      }
+      return res.status(200).json({ message: "No Pending Requests" });
+    }
+    return res.status(200).json(requests);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const acceptedRequest = async (req, res) => {
+  const { company_id } = req.body;
+  if (!company_id) {
+    return res.status(400).json({ message: "Please Provide The Company ID" });
+  }
+  try {
+    const requests = await Request.find({ company_id, status: "Accepted" });
+    if (requests.length === 0) {
+      const company = await Company.findOne({ _id: company_id });
+      if (!company) {
+        return res.status(400).json({ message: "Company Doesn't Exist" });
+      }
+      return res.status(200).json({ message: "No Accepted Requests" });
+    }
+    return res.status(200).json(requests);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const declinedRequest = async (req, res) => {
+  const { company_id } = req.body;
+  if (!company_id) {
+    return res.status(400).json({ message: "Please Provide The Company ID" });
+  }
+  try {
+    const requests = await Request.find({ company_id, status: "Declined" });
+    if (requests.length === 0) {
+      const company = await Company.findOne({ _id: company_id });
+      if (!company) {
+        return res.status(400).json({ message: "Company Doesn't Exist" });
+      }
+      return res.status(200).json({ message: "No Declined Requests" });
+    }
+    return res.status(200).json(requests);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  sendRequest,
+  createCompany,
+  createInsurance,
+  pendingRequest,
+  acceptedRequest,
+  declinedRequest,
+};

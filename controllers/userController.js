@@ -71,6 +71,8 @@ const getNearbyHospital = async (req, res) => {
     res.status(200).json(nearbyHospitals);
   }
 };
+
+//Completed Appointment function
 const bookAppointment = async (req, res) => {
   //User will select timing
   //User will provide description
