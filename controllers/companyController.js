@@ -184,6 +184,28 @@ const declinedRequest = async (req, res) => {
   }
 };
 
+const updateDiscount = async (req, res) => {
+  const { insurance_id, discount } = req.body;
+  const emptyFields = [];
+  if (!insurance_id) {
+    emptyFields.push("Insurance ID");
+  }
+  if (!discount) {
+    emptyFields.push("Discount");
+  }
+  if (emptyFields.length !== 0) {
+    return res
+      .status(400)
+      .json({ message: "Please Fill in all the Fields", emptyFields });
+  }
+  try {
+    const insurance = await Insurance.applyDiscount(insurance_id, discount);
+    res.status(200).json(insurance);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   sendRequest,
   createCompany,
@@ -191,4 +213,5 @@ module.exports = {
   pendingRequest,
   acceptedRequest,
   declinedRequest,
+  updateDiscount,
 };
