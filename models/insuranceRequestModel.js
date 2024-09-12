@@ -19,6 +19,13 @@ const requestSchema = new schema(
     status: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v) {
+          return v === "Accepted" || v === "Declined" || v === "Pending";
+        },
+        message: (props) =>
+          `${props.value} is not a valid Status! Use Accepted Declined or Pending`,
+      },
     },
   },
   { timestamps: true }

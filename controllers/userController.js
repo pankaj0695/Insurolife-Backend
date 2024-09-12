@@ -94,11 +94,11 @@ const bookAppointment = async (req, res) => {
   if (!user_id) {
     emptyFields.push("User ID");
   }
-  const { appointments } = await User.findById(user_id, {
-    appointments: 1,
-    _id: 0,
+  const appointment = await Appointment.findOne({
+    user_id,
+    status: { $in: ["Accepted", "Pending"] },
   });
-  if (appointments && appointments.status !== "Declined") {
+  if (appointment) {
     return res
       .status(400)
       .json({ message: "An Appointment is already booked" });
@@ -127,6 +127,7 @@ const bookAppointment = async (req, res) => {
   }
   const status = "Pending";
   const newAppointment = await Appointment.create({
+    user_id,
     hospital_id,
     timing,
     userDescription: desc,
@@ -137,8 +138,6 @@ const bookAppointment = async (req, res) => {
     return res.status(500).json({ message: "Some Error Occured" });
   }
   res.status(200).json(newAppointment);
-
-  await User.findByIdAndUpdate(user_id, { appointments: newAppointment });
 };
 const giveRatings = async (req, res) => {
   const { user_id, hospital_id, rating } = req.body;

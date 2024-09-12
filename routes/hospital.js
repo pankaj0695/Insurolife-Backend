@@ -12,7 +12,8 @@ const {
 router.post("/", createHospital);
 router.patch("/notifications", acceptOrDeclineRequest);
 router.get("/notifications", getAllRequests);
-router.get("/:hospital_name", getInsurance);
 router.patch("/appointments", acceptOrDeclineAppointment);
-router.get("/appointments",getAllAppointments)
+router.get("/appointments", getAllAppointments);
+router.get("/:hospital_name", getInsurance);
+
 module.exports = router;

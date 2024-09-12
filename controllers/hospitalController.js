@@ -1,7 +1,8 @@
 const Hospital = require("../models/hospitalModel");
+const User = require("../models/userModel");
 const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
-const mongoose = require("mongoose");
+const Appointment = require("../models/appointmentModel");
 
 //gets all insurance which are accepted by hospital
 const getInsurance = async (req, res) => {
@@ -121,8 +122,36 @@ const acceptOrDeclineRequest = async (req, res) => {
   }
 };
 
-//Incomplete Appointment Function
-const getAllAppointments = async (req, res) => {};
+//Complete Appointment Function
+const getAllAppointments = async (req, res) => {
+  const { hospital_id } = req.body;
+  if (!hospital_id) {
+    return res.status(400).json({ message: "Please provide Hospital ID" });
+  }
+
+  try {
+    const appointments = await Appointment.find({ hospital_id });
+
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No Appointments Found" });
+    }
+
+    const appointmentDetails = await Promise.all(
+      appointments.map(async (appointment) => {
+        const user = await User.findOne({ _id: appointment.user_id });
+
+        return {
+          appointment,
+          user: user || null,
+        };
+      })
+    );
+
+    res.status(200).json({ appointmentDetails });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 //Incomplete Appointment Function
 const acceptOrDeclineAppointment = async (req, res) => {
@@ -133,7 +162,54 @@ const acceptOrDeclineAppointment = async (req, res) => {
   //If declines then a message will be provided
   //Hospital will provide date and request will be accepted
   //Hospital will allot a Doctor(Doctor Details Not Stored in db)
-  const { hospital_id, status } = req.body;
+  const { hospital_id, appointment_id, status, date } = req.body;
+  if (!hospital_id) {
+    return res.status(400).json({ message: "Error in selecting the hospital" });
+  }
+  if (!appointment_id) {
+    return res.status(404).json({ message: "No Appointment" });
+  }
+  if (!status) {
+    return res.status(400).json({ message: "Select Accept or Decline" });
+  }
+  if (!date) {
+    return res.status(400).json({ message: "Select A Date" });
+  }
+
+  try {
+    const hospital = await Hospital.findById(hospital_id);
+    if (!hospital) {
+      return res.status(404).json({ message: "Hospital Not Found" });
+    }
+    const appointment = await Appointment.findOne({
+      _id: appointment_id,
+      status: "Pending",
+    });
+    if (!appointment) {
+      return res.status(404).json({ message: "No Appointments" });
+    }
+    switch (status) {
+      case "Accept":
+        await Appointment.findByIdAndUpdate(appointment_id, {
+          status: "Accepted",
+          date,
+        });
+        appointment.status = "Accepted";
+
+        break;
+      case "Decline":
+        await Appointment.findByIdAndUpdate(appointment_id, {
+          status: "Declined",
+        });
+        appointment.status = "Declined";
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid Status" });
+    }
+    return res.status(200).json(appointment);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 module.exports = {

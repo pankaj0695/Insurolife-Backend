@@ -4,6 +4,11 @@ const Hospital = require("./hospitalModel");
 
 const appointmentSchema = new schema(
   {
+    user_id: {
+      type: schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     hospital_id: {
       type: schema.Types.ObjectId,
       ref: "Hospital",
@@ -40,6 +45,18 @@ const appointmentSchema = new schema(
     status: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v) {
+          return (
+            v === "Accepted" ||
+            v === "Declined" ||
+            v === "Pending" ||
+            v === "Completed"
+          );
+        },
+        message: (props) =>
+          `${props.value} is not a valid Status! Use Accepted Declined Pending or Completed`,
+      },
     },
   },
   { timestamps: true }

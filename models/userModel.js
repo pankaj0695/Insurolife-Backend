@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
-const Appointment = require("./appointmentModel");
+
 const medical_record = new schema({
   doctor: {
     type: String,
@@ -42,10 +42,6 @@ const userSchema = new schema({
     required: true,
   },
   medical_records: [medical_record],
-  appointments: {
-    type: schema.Types.ObjectId,
-    ref: "Appointment",
-  },
 });
 
 module.exports = mongoose.model("User", userSchema);
