@@ -1,8 +1,12 @@
-const { json } = require("express");
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 
 const insuranceSchema = new schema({
+  company_id: {
+    type: schema.Types.ObjectId,
+    ref: "Company",
+    required: true,
+  },
   insurance_name: {
     type: String,
     required: true,

@@ -3,37 +3,22 @@ const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
 const mongoose = require("mongoose");
 
-//gets all insurance accepted by hospital
+//gets all insurance which are accepted by hospital
 const getInsurance = async (req, res) => {
+  const { hospital_id } = req.body;
+  if (!hospital_id) {
+    return res.status(400).json({ message: "Please provide Hospital ID" });
+  }
   try {
-    const hospital_name = req.params.hospital_name;
-
-    const hospitals = await Hospital.find({ hospital_name }, { _id: 1 });
-    const hospital_ids = hospitals.map((hospital) => hospital._id);
-    if (hospital_ids.length === 0) {
-      return res.status(404).json({ message: "Hospital Does not Exist" });
-    }
-
-    const requests = await Request.find(
-      { hospital_id: { $in: hospital_ids }, status: "Accepted" },
-      { insurance_id: 1 }
-    );
-
-    if (requests.length === 0) {
-      return res.status(200).json({ message: "No Insurance Approved Yet" });
-    }
-
+    const requests = await Request.find({ hospital_id, status: "Accepted" });
     const insurance_ids = requests.map((request) => request.insurance_id);
-
-    const insurances = await Insurance.find({ _id: { $in: insurance_ids } });
-
-    if (insurances.length === 0) {
-      return res.status(404).json({ message: "Insurance Not Found" });
+    if (insurance_ids.length === 0) {
+      res.status(404).json({ message: "No Insurances Accepted" });
     }
-
-    res.status(200).json(insurances);
+    const insurances = await Insurance.find({ _id: { $in: insurance_ids } });
+    return res.status(200).json(insurances);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -58,6 +43,16 @@ const createHospital = async (req, res) => {
 
   //adding to db
   try {
+    const existingHospital = await Hospital.findOne({
+      hospital_name,
+      city,
+      state,
+    });
+    if (existingHospital) {
+      return res
+        .status(400)
+        .json({ message: "This Hospital Branch already exists" });
+    }
     const hospital = await Hospital.create({ hospital_name, city, state });
     res.status(200).json(hospital);
   } catch (error) {
@@ -82,7 +77,9 @@ const getAllRequests = async (req, res) => {
         .json({ message: "No requests found in the request history" });
     }
 
-    const allRequests = await Request.find({ _id: { $in: hospital.requests } });
+    const allRequests = await Request.find({
+      _id: { $in: hospital.requests },
+    }).sort({ createdAt: -1 });
 
     if (!allRequests || allRequests.length === 0) {
       return res.status(404).json({ message: "No requests found" });

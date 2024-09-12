@@ -2,18 +2,14 @@ const Company = require("../models/companyModel");
 const Hospital = require("../models/hospitalModel");
 const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
-const mongoose = require("mongoose");
 
 const sendRequest = async (req, res) => {
-  const { hospital_name, company_name, insurance_name } = req.body;
+  const { hospital_id, insurance_id } = req.body;
   let emptyFields = [];
-  if (!hospital_name) {
+  if (!hospital_id) {
     emptyFields.push("Hospital");
   }
-  if (!company_name) {
-    emptyFields.push("Company");
-  }
-  if (!insurance_name) {
+  if (!insurance_id) {
     emptyFields.push("Insurance");
   }
   if (emptyFields.length > 0) {
@@ -23,9 +19,11 @@ const sendRequest = async (req, res) => {
   }
   try {
     //Getting ids of entities and checking if they exist
-    const hospital = await Hospital.findOne({ hospital_name }, { id: 1 });
-    const company = await Company.findOne({ company_name }, { id: 1 });
-    const insurance = await Insurance.findOne({ insurance_name }, { id: 1 });
+    const hospital = await Hospital.findById(hospital_id);
+    const insurance = await Insurance.findById(insurance_id);
+    const company_id = insurance.company_id;
+    const company = await Company.findById(company_id);
+
     if (!hospital) {
       return res.status(404).json({ message: "Hospital Doesn't Exist" });
     }
@@ -35,10 +33,6 @@ const sendRequest = async (req, res) => {
     if (!insurance) {
       return res.status(404).json({ message: "Insurance Doesn't exist" });
     }
-
-    const hospital_id = hospital._id;
-    const company_id = company._id;
-    const insurance_id = insurance._id;
 
     //checking if the request already exists or not
     const id = await Request.find(
@@ -92,8 +86,11 @@ const createCompany = async (req, res) => {
 };
 
 const createInsurance = async (req, res) => {
-  const { insurance_name, claim, compatibility, emi } = req.body;
+  const { company_id, insurance_name, claim, compatibility, emi } = req.body;
   const emptyFields = [];
+  if (!company_id) {
+    emptyFields.push("Company ID");
+  }
   if (!insurance_name) {
     emptyFields.push("Insurance Name");
   }
@@ -107,7 +104,9 @@ const createInsurance = async (req, res) => {
     emptyFields.push("EMI");
   }
   if (emptyFields.length > 0) {
-    return res.status(400).json({ message: "Please Enter In All The Fields" });
+    return res
+      .status(400)
+      .json({ message: "Please Enter In All The Fields", emptyFields });
   }
   try {
     const existingInsuranceName = await Insurance.findOne({ insurance_name });
@@ -115,6 +114,7 @@ const createInsurance = async (req, res) => {
       return res.status(400).json({ message: "Insurance Already Exists" });
     }
     const insurance = await Insurance.create({
+      company_id,
       insurance_name,
       claim,
       compatibility,
