@@ -21,7 +21,7 @@ const appointmentSchema = new schema(
       type: String,
       validate: {
         validator: function (v) {
-          return /^\d{2}-\d{2}-\d{4}$/.test(v);
+          return /^\d{4}-\d{2}-\d{2}$/.test(v);
         },
         message: (props) =>
           `${props.value} is not a valid date format! Use dd-mm-yyyy`,
