@@ -59,43 +59,45 @@ const createUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: "Please Enter In All The Fields" });
+  }
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(403).json({ message: "Email is Invalid" });
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(403).send("Invalid password");
+    }
+    const token = jwt.sign({ name: user.name }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ user, token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const getNearbyHospital = async (req, res) => {
-  const { email, city, state } = req.body;
-  //For user's location
+  const { city, state } = req.body;
   try {
     if (!city && !state) {
-      if (!email) {
-        return res.status(400).json({ message: "Some Error Occured" });
-      }
-      const user = await User.findOne({ email }, { city: 1, _id: 0 });
-      if (!user) {
-        return res.status(400).json({ message: "User Doesn't Exist" });
-      }
-      const { city: userCity } = user;
-      if (!userCity) {
-        return res.status(400).json({ message: "Some Error Occured" });
-      }
-      const nearbyHospitals = await Hospital.find({ city: userCity });
-      if (nearbyHospitals.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "No Registered Hospitals in your area" });
-      }
-      res.status(200).json(nearbyHospitals);
+      return res.status(400).json({ message: "Some Error Occured" });
     }
-    //for location provided through filter
-    else {
-      if (!city && !state) {
-        return res.status(400).json({ message: "Some Error Occured" });
-      }
-      const nearbyHospitals = await Hospital.find({ city, state });
-      if (nearbyHospitals.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "No Registered Hospitals in the area" });
-      }
-      res.status(200).json(nearbyHospitals);
+    const nearbyHospitals = await Hospital.find({ city, state });
+    if (nearbyHospitals.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "No Registered Hospitals in your area" });
     }
+    res.status(200).json(nearbyHospitals);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -209,6 +211,7 @@ const giveRatings = async (req, res) => {
 
 module.exports = {
   createUser,
+  loginUser,
   getNearbyHospital,
   bookAppointment,
   giveRatings,

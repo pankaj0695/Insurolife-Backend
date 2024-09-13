@@ -96,6 +96,31 @@ const createCompany = async (req, res) => {
   }
 };
 
+const loginCompany = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: "Please Enter In All The Fields" });
+  }
+  try {
+    const company = await Company.findOne({ email });
+    if (!company) {
+      return res.status(403).json({ message: "Email is Invalid" });
+    }
+
+    const validPassword = await bcrypt.compare(password, company.password);
+    if (!validPassword) {
+      return res.status(403).send("Invalid password");
+    }
+    const token = jwt.sign({ name: company.company_name }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ company, token });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const createInsurance = async (req, res) => {
   const { company_id, insurance_name, claim, compatibility, emi } = req.body;
   const emptyFields = [];
@@ -220,6 +245,7 @@ const updateDiscount = async (req, res) => {
 module.exports = {
   sendRequest,
   createCompany,
+  loginCompany,
   createInsurance,
   pendingRequest,
   acceptedRequest,

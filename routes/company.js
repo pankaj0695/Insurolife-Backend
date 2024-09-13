@@ -3,18 +3,21 @@ const router = express.Router();
 const {
   sendRequest,
   createCompany,
+  loginCompany,
   createInsurance,
   pendingRequest,
   acceptedRequest,
   declinedRequest,
   updateDiscount,
 } = require("../controllers/companyController");
+const { authenticateToken } = require("../helpers/helper");
 
-router.post("/Request/Send", sendRequest);
+router.post("/Request/Send", authenticateToken, sendRequest);
 router.post("/signup", createCompany);
-router.post("/Insurance/New", createInsurance);
-router.get("/Notifications/Pending", pendingRequest);
-router.get("/Notifications/Accepted", acceptedRequest);
-router.get("/Notifications/Declined", declinedRequest);
-router.patch("/Insurance/insurance_id", updateDiscount);
+router.post("/login", loginCompany);
+router.post("/Insurance/New", authenticateToken, createInsurance);
+router.get("/Notifications/Pending", authenticateToken, pendingRequest);
+router.get("/Notifications/Accepted", authenticateToken, acceptedRequest);
+router.get("/Notifications/Declined", authenticateToken, declinedRequest);
+router.patch("/Insurance/insurance_id", authenticateToken, updateDiscount);
 module.exports = router;

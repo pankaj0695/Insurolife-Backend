@@ -3,17 +3,20 @@ const router = express.Router();
 const {
   getInsurance,
   createHospital,
+  loginHospital,
   acceptOrDeclineRequest,
   getAllRequests,
   getAllAppointments,
   acceptOrDeclineAppointment,
 } = require("../controllers/hospitalController");
+const { authenticateToken } = require("../helpers/helper");
 
 router.post("/signup", createHospital);
-router.patch("/notifications", acceptOrDeclineRequest);
-router.get("/notifications", getAllRequests);
-router.patch("/appointments", acceptOrDeclineAppointment);
-router.get("/appointments", getAllAppointments);
-router.get("/:hospital_name", getInsurance);
+router.post("/login", loginHospital);
+router.patch("/notifications", authenticateToken, acceptOrDeclineRequest);
+router.get("/notifications", authenticateToken, getAllRequests);
+router.patch("/appointments", authenticateToken, acceptOrDeclineAppointment);
+router.get("/appointments", authenticateToken, getAllAppointments);
+router.get("/:hospital_name", authenticateToken, getInsurance);
 
 module.exports = router;
