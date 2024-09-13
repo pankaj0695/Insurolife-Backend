@@ -9,7 +9,7 @@ const {
   acceptOrDeclineAppointment,
 } = require("../controllers/hospitalController");
 
-router.post("/", createHospital);
+router.post("/signup", createHospital);
 router.patch("/notifications", acceptOrDeclineRequest);
 router.get("/notifications", getAllRequests);
 router.patch("/appointments", acceptOrDeclineAppointment);

@@ -1,8 +1,12 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
 const Hospital = require("../models/hospitalModel");
 const User = require("../models/userModel");
 const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
 const Appointment = require("../models/appointmentModel");
+const { SECRET_KEY } = require("../helpers/helper");
 
 //gets all insurance which are accepted by hospital
 const getInsurance = async (req, res) => {
@@ -25,7 +29,7 @@ const getInsurance = async (req, res) => {
 
 //Create a Hospital profile
 const createHospital = async (req, res) => {
-  const { hospital_name, city, state } = req.body;
+  const { hospital_name, city, state, email, password } = req.body;
   let emptyFields = [];
   if (!hospital_name) {
     emptyFields.push("Hospital Name");
@@ -36,6 +40,12 @@ const createHospital = async (req, res) => {
   if (!state) {
     emptyFields.push("state");
   }
+  if (!email) {
+    emptyFields.push("Email");
+  }
+  if (!password) {
+    emptyFields.push("Password");
+  }
   if (emptyFields.length > 0) {
     return res
       .status(400)
@@ -44,18 +54,23 @@ const createHospital = async (req, res) => {
 
   //adding to db
   try {
-    const existingHospital = await Hospital.findOne({
+    const existingHospital = await Hospital.findOne({ email });
+    if (existingHospital) {
+      return res.status(400).json({ message: "Email is already registered" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const hospital = await Hospital.create({
       hospital_name,
       city,
       state,
+      email,
+      password: hashedPassword,
     });
-    if (existingHospital) {
-      return res
-        .status(400)
-        .json({ message: "This Hospital Branch already exists" });
-    }
-    const hospital = await Hospital.create({ hospital_name, city, state });
-    res.status(200).json(hospital);
+    const token = jwt.sign({ name: hospital_name }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ hospital, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

@@ -7,6 +7,14 @@ const companySchema = new schema({
     required: true,
     unique: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
   insurance_offered_id: {
     type: String,
   },

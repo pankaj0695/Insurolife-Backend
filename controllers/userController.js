@@ -1,10 +1,16 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
 const User = require("../models/userModel");
 const Hospital = require("../models/hospitalModel");
 const Appointment = require("../models/appointmentModel");
 const Rating = require("../models/ratingModel");
+
+const { SECRET_KEY } = require("../helpers/helper");
+
 //This is a comment
 const createUser = async (req, res) => {
-  const { name, dob, email, city, state } = req.body;
+  const { name, dob, email, city, state, password } = req.body;
   const emptyFields = [];
   if (!name) {
     emptyFields.push("Name");
@@ -21,6 +27,9 @@ const createUser = async (req, res) => {
   if (!state) {
     emptyFields.push("State");
   }
+  if (!password) {
+    emptyFields.push("Password");
+  }
   if (emptyFields.length > 0) {
     return res
       .status(400)
@@ -33,8 +42,19 @@ const createUser = async (req, res) => {
   }
 
   try {
-    const user = await User.create({ name, dob, email, city, state });
-    res.status(200).json(user);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      dob,
+      email,
+      city,
+      state,
+      password: hashedPassword,
+    });
+
+    const token = jwt.sign({ name: name }, SECRET_KEY, { expiresIn: "1h" });
+
+    res.status(200).json({ user, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

@@ -24,6 +24,14 @@ const hospitalSchema = new schema({
       ref: "Request",
     },
   ],
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
   ratingCount: {
     type: Number,
     default: 0,

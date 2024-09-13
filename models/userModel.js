@@ -23,7 +23,7 @@ const userSchema = new schema({
     validate: {
       validator: function (v) {
         // Basic validation for dd-mm-yyyy format
-        return /^\d{2}-\d{2}-\d{4}$/.test(v);
+        return /^\d{4}-\d{2}-\d{2}$/.test(v);
       },
       message: (props) =>
         `${props.value} is not a valid date format! Use dd-mm-yyyy`,
@@ -38,6 +38,10 @@ const userSchema = new schema({
     required: true,
   },
   state: {
+    type: String,
+    required: true,
+  },
+  password: {
     type: String,
     required: true,
   },

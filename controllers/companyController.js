@@ -1,7 +1,11 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
 const Company = require("../models/companyModel");
 const Hospital = require("../models/hospitalModel");
 const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
+const { SECRET_KEY } = require("../helpers/helper");
 
 const sendRequest = async (req, res) => {
   const { hospital_id, insurance_id } = req.body;
@@ -67,19 +71,26 @@ const sendRequest = async (req, res) => {
 
 //creating a company profile
 const createCompany = async (req, res) => {
-  const { company_name } = req.body;
-  if (!company_name) {
+  const { company_name, email, password } = req.body;
+  if (!company_name || !email || !password) {
     return res.status(400).json({ message: "Please Enter In All The Fields" });
   }
   try {
-    const existingName = await Company.findOne({ company_name });
+    const existingName = await Company.findOne({ email });
     if (existingName) {
-      return res
-        .status(400)
-        .json({ message: "Company with this name already exists" });
+      return res.status(400).json({ message: "Email is already registered" });
     }
-    const company = await Company.create({ company_name });
-    res.status(200).json({ company });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const company = await Company.create({
+      company_name,
+      email,
+      password: hashedPassword,
+    });
+    const token = jwt.sign({ name: company_name }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ company, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
