@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
-const Hospital = require("./hospitalModel");
+const Company = require("./companyModel");
 
 const appointmentSchema = new schema(
   {
@@ -9,12 +9,12 @@ const appointmentSchema = new schema(
       ref: "User",
       required: true,
     },
-    hospital_id: {
+    company_id: {
       type: schema.Types.ObjectId,
-      ref: "Hospital",
+      ref: "Company",
       required: true,
     },
-    doctor: {
+    counsellor: {
       type: String,
     },
     date: {
@@ -38,10 +38,6 @@ const appointmentSchema = new schema(
           `${props.value} is not a valid time format! Use hh:mm (24 hrs)`,
       },
     },
-    userDescription: {
-      type: String,
-      required: true,
-    },
     status: {
       type: String,
       required: true,
@@ -57,6 +53,9 @@ const appointmentSchema = new schema(
         message: (props) =>
           `${props.value} is not a valid Status! Use Accepted Declined Pending or Completed`,
       },
+    },
+    meeting: {
+      type: String,
     },
   },
   { timestamps: true }

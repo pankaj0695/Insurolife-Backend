@@ -5,6 +5,8 @@ const Company = require("../models/companyModel");
 const Hospital = require("../models/hospitalModel");
 const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
+const Appointment = require("../models/appointmentModel");
+const User = require("../models/userModel");
 const { SECRET_KEY } = require("../helpers/helper");
 
 const sendRequest = async (req, res) => {
@@ -181,6 +183,7 @@ const pendingRequest = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 const acceptedRequest = async (req, res) => {
   const { company_id } = req.body;
   if (!company_id) {
@@ -200,6 +203,7 @@ const acceptedRequest = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 const declinedRequest = async (req, res) => {
   const { company_id } = req.body;
   if (!company_id) {
@@ -239,6 +243,36 @@ const updateDiscount = async (req, res) => {
     res.status(200).json(insurance);
   } catch (error) {
     return res.status(400).json({ error: error.message });
+  }
+};
+
+const getAllAppointments = async (req, res) => {
+  const { company_id } = req.body;
+  if (!company_id) {
+    return res.status(400).json({ message: "Please provide Company ID" });
+  }
+
+  try {
+    const appointments = await Appointment.find({ company_id });
+
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No Appointments Found" });
+    }
+
+    const appointmentDetails = await Promise.all(
+      appointments.map(async (appointment) => {
+        const user = await User.findOne({ _id: appointment.user_id });
+
+        return {
+          appointment,
+          user: user || null,
+        };
+      })
+    );
+
+    res.status(200).json({ appointmentDetails });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 

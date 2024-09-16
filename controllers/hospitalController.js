@@ -162,6 +162,7 @@ const acceptOrDeclineRequest = async (req, res) => {
   }
 };
 
+//Not to be used Functions!!!!
 //Complete Appointment Function
 const getAllAppointments = async (req, res) => {
   const { hospital_id } = req.body;

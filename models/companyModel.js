@@ -15,8 +15,5 @@ const companySchema = new schema({
     type: String,
     required: true,
   },
-  insurance_offered_id: {
-    type: String,
-  },
 });
 module.exports = mongoose.model("Company", companySchema);

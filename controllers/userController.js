@@ -3,7 +3,9 @@ const bcrypt = require("bcryptjs");
 
 const User = require("../models/userModel");
 const Hospital = require("../models/hospitalModel");
+const Company = require("../models/companyModel");
 const Appointment = require("../models/appointmentModel");
+const Insurance = require("../models/insuranceModel");
 const Rating = require("../models/ratingModel");
 
 const { SECRET_KEY } = require("../helpers/helper");
@@ -103,14 +105,64 @@ const getNearbyHospital = async (req, res) => {
   }
 };
 
+const getAllCompanies = async (req, res) => {
+  try {
+    const company = await Company.find();
+    if (company.length === 0) {
+      return res.status(404).json({ message: "No Insurance Companies" });
+    }
+    res.status(200).json(company);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const getAllInsurance = async (req, res) => {
+  const { filter, value } = req.body;
+  try {
+    //Company, Price, Claim
+    switch (filter) {
+      case "company":
+        const insurance1 = await Insurance.find({ company_id: value });
+        if (insurance1.length === 0) {
+          return res
+            .status(404)
+            .json({ message: "No Insurance By this Company" });
+        }
+        res.status(200).json(insurance1);
+        break;
+      case "price":
+        const insurance2 = await Insurance.find({ emi: { $lt: value } });
+        if (insurance2.length === 0) {
+          return res
+            .status(404)
+            .json({ message: "No Insurance in this Range" });
+        }
+        res.status(200).json(insurance2);
+        break;
+      case "claim":
+        const insurance3 = await Insurance.find({ claim: { $lt: value } });
+        if (insurance3.length === 0) {
+          return res
+            .status(404)
+            .json({ message: "No Insurance in this Range" });
+        }
+        res.status(200).json(insurance3);
+        break;
+      default:
+        const insurance = await Insurance.find();
+        if (insurance.length === 0) {
+          return res.status(404).json({ message: "No Insurance Found" });
+        }
+        res.status(200).json(insurance);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 //Completed Appointment function
 const bookAppointment = async (req, res) => {
-  //User will select timing
-  //User will provide description
-  //Appointment request will be sent
-  //Hospital will provide date and request will be accepted
-  //Hospital will allot a Doctor(Doctor Details Not Stored in db)
-
+  //These ID's are mongodb object
   const { user_id, hospital_id, timing, desc } = req.body;
   const emptyFields = [];
   if (!user_id) {
@@ -215,4 +267,6 @@ module.exports = {
   getNearbyHospital,
   bookAppointment,
   giveRatings,
+  getAllInsurance,
+  getAllCompanies,
 };
