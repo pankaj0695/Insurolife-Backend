@@ -105,6 +105,7 @@ const getNearbyHospital = async (req, res) => {
   }
 };
 
+//For dropdown of companies
 const getAllCompanies = async (req, res) => {
   try {
     const company = await Company.find();
@@ -116,6 +117,8 @@ const getAllCompanies = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//With Filters
 const getAllInsurance = async (req, res) => {
   const { filter, value } = req.body;
   try {
@@ -213,6 +216,7 @@ const bookAppointment = async (req, res) => {
   }
   res.status(200).json(newAppointment);
 };
+
 const giveRatings = async (req, res) => {
   const { user_id, hospital_id, rating } = req.body;
   const emptyFields = [];

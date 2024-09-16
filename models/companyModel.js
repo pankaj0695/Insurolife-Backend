@@ -11,6 +11,15 @@ const companySchema = new schema({
     type: String,
     required: true,
   },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  phone_no: {
+    type: String,
+  },
   password: {
     type: String,
     required: true,
