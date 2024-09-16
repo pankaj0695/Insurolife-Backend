@@ -24,7 +24,7 @@ const appointmentSchema = new schema(
           return /^\d{4}-\d{2}-\d{2}$/.test(v);
         },
         message: (props) =>
-          `${props.value} is not a valid date format! Use dd-mm-yyyy`,
+          `${props.value} is not a valid date format! Use yyyy-mm-dd`,
       },
     },
     timing: {

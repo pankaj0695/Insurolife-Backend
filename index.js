@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/user", userRoute);
-app.use("/company", companyRoute);
+app.use("/insurer", companyRoute);
 app.use("/hospital", hospitalRoute);
 
 mongoose
