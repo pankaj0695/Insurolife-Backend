@@ -9,6 +9,8 @@ const {
   acceptedRequest,
   declinedRequest,
   updateDiscount,
+  getAllAppointments,
+  scheduleAppointment,
 } = require("../controllers/companyController");
 const { authenticateToken } = require("../helpers/helper");
 
@@ -20,4 +22,6 @@ router.get("/Notifications/Pending", authenticateToken, pendingRequest);
 router.get("/Notifications/Accepted", authenticateToken, acceptedRequest);
 router.get("/Notifications/Declined", authenticateToken, declinedRequest);
 router.patch("/Insurance/insurance_id", authenticateToken, updateDiscount);
+router.patch("/appointments", authenticateToken, scheduleAppointment);
+router.get("/appointments", authenticateToken, getAllAppointments);
 module.exports = router;

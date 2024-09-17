@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const session = require("express-session");
 
 const Company = require("../models/companyModel");
 const Hospital = require("../models/hospitalModel");
@@ -7,6 +8,8 @@ const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
 const Appointment = require("../models/appointmentModel");
 const User = require("../models/userModel");
+
+const { getAccessToken, generateZoomLink } = require("./appointmentCall");
 const { SECRET_KEY } = require("../helpers/helper");
 
 const sendRequest = async (req, res) => {
@@ -276,6 +279,86 @@ const getAllAppointments = async (req, res) => {
   }
 };
 
+const scheduleAppointment = async (req, res) => {
+  const { company_id, appointment_id, status, date } = req.body;
+  if (!company_id) {
+    return res.status(400).json({ message: "Error in selecting the company" });
+  }
+  if (!appointment_id) {
+    return res.status(404).json({ message: "No Appointment" });
+  }
+  if (!status) {
+    return res.status(400).json({ message: "Select Accept or Decline" });
+  }
+  if (!date) {
+    return res.status(400).json({ message: "Select A Date" });
+  }
+
+  try {
+    const company = await Company.findById(company_id);
+    if (!company) {
+      return res.status(404).json({ message: "company Not Found" });
+    }
+    const appointment = await Appointment.findOne({
+      _id: appointment_id,
+      status: "Pending",
+    });
+    if (!appointment) {
+      return res.status(404).json({ message: "No Appointments" });
+    }
+    switch (status) {
+      case "Accept":
+        //Meeting link to be sent in Appointment.meeting here
+        try {
+          if (!req.query.code) {
+            return res.redirect(
+              `${process.env.ZOOM_AUTHORIZE_URI}&state=${appointment_id},${company_id},${status},${date}`
+            );
+          }
+          const code = req.query.code;
+          const [Appointment_id, Company_id, Status, Date] =
+            req.query.state.split(",");
+          if (!code) {
+            return res
+              .status(400)
+              .json({ message: "Authorization code missing." });
+          }
+          const tokenData = await getAccessToken(code);
+          const accessToken = tokenData.access_token;
+          const meetingDate = date + "T" + appointment.timing + ":00Z";
+          // Generate the Zoom link
+          const zoomLink = await generateZoomLink(accessToken, meetingDate);
+
+          // Store the Zoom meeting link in the appointment
+          appointment.meetingLink = zoomLink;
+          appointment.status = "Accepted";
+          appointment.date = Date;
+          await appointment.save();
+
+          return res.status(200).json({
+            message: "Appointment Accepted",
+            appointment,
+            zoomLink,
+          });
+        } catch (error) {
+          res.status(500).json({ error: error.message });
+        }
+        break;
+      case "Decline":
+        await Appointment.findByIdAndUpdate(appointment_id, {
+          status: "Declined",
+        });
+        appointment.status = "Declined";
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid Status" });
+    }
+    return res.status(200).json(appointment);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   sendRequest,
   createCompany,
@@ -285,4 +368,6 @@ module.exports = {
   acceptedRequest,
   declinedRequest,
   updateDiscount,
+  getAllAppointments,
+  scheduleAppointment,
 };

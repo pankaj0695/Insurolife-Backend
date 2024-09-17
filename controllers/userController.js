@@ -166,7 +166,7 @@ const getAllInsurance = async (req, res) => {
 //Completed Appointment function
 const bookAppointment = async (req, res) => {
   //These ID's are mongodb object
-  const { user_id, hospital_id, timing, desc } = req.body;
+  const { user_id, company_id, timing } = req.body;
   const emptyFields = [];
   if (!user_id) {
     emptyFields.push("User ID");
@@ -180,23 +180,20 @@ const bookAppointment = async (req, res) => {
       .status(400)
       .json({ message: "An Appointment is already booked" });
   }
-  if (!hospital_id) {
-    emptyFields.push("Hospital ID");
+  if (!company_id) {
+    emptyFields.push("Company ID");
   }
   if (!timing) {
     emptyFields.push("Timing");
-  }
-  if (!desc) {
-    emptyFields.push("Description");
   }
   if (emptyFields.length > 0) {
     return res
       .status(400)
       .json({ message: "Please Enter in all the Fields", emptyFields });
   }
-  const hospital = await Hospital.findById(hospital_id);
-  if (!hospital) {
-    return res.status(400).json({ message: "Hospital Doesn't Exist" });
+  const company = await Company.findById(company_id);
+  if (!company) {
+    return res.status(400).json({ message: "company Doesn't Exist" });
   }
   const user = await User.findById(user_id);
   if (!user) {
@@ -205,9 +202,8 @@ const bookAppointment = async (req, res) => {
   const status = "Pending";
   const newAppointment = await Appointment.create({
     user_id,
-    hospital_id,
+    company_id,
     timing,
-    userDescription: desc,
     status,
   });
 
