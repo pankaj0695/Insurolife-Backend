@@ -6,12 +6,16 @@ const counsellorSchema = new schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
   company_id: {
     type: schema.Types.ObjectId,
     ref: "Company",
     required: true,
   },
-  description: [
+  tags: [
     {
       type: String,
     },

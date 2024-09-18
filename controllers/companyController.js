@@ -395,9 +395,12 @@ const markAsDone = async (req, res) => {
 };
 
 const newCounsellor = async (req, res) => {
-  const { name, company_id, description, phone_no, email } = req.body;
+  const { name, company_id, tags, phone_no, email, image } = req.body;
   const emptyFields = [];
   if (!name) {
+    emptyFields.push("Name");
+  }
+  if (!image) {
     emptyFields.push("Name");
   }
   if (!company_id) {
@@ -428,15 +431,16 @@ const newCounsellor = async (req, res) => {
     }
     const counsellor = await Counsellor.create({
       name,
+      image,
       company_id,
-      description,
+      tags,
       phone_no,
       email,
     });
     if (!counsellor) {
       return res.status(500).json({ message: "Some Error Occured" });
     }
-    res.status(200).json(counsellor);
+    res.status(200).json({ counsellor });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

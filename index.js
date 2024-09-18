@@ -15,7 +15,7 @@ const generateUploadURL = require("./helpers/s3.js");
 app.use(express.json());
 app.use(cors());
 
-app.use("/user", userRoute);
+app.use("/customer", userRoute);
 app.use("/insurer", companyRoute);
 app.use("/hospital", hospitalRoute);
 app.use(
