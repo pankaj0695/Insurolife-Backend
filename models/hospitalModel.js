@@ -7,6 +7,10 @@ const hospitalSchema = new schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
   city: {
     type: String,
     required: true,
@@ -28,6 +32,10 @@ const hospitalSchema = new schema({
     },
   ],
   email: {
+    type: String,
+    required: true,
+  },
+  contactNo: {
     type: String,
     required: true,
   },

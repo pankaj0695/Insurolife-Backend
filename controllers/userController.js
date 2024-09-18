@@ -12,16 +12,26 @@ const { SECRET_KEY } = require("../helpers/helper");
 
 //This is a comment
 const createUser = async (req, res) => {
-  const { name, dob, email, city, state, password } = req.body;
+  const { name, image, gender, dob, email, contactNo, city, state, password } =
+    req.body;
   const emptyFields = [];
   if (!name) {
     emptyFields.push("Name");
+  }
+  if (!gender) {
+    emptyFields.push("Gender");
+  }
+  if (!image) {
+    emptyFields.push("Image");
   }
   if (!dob) {
     emptyFields.push("DOB");
   }
   if (!email) {
     emptyFields.push("Email");
+  }
+  if (!contactNo) {
+    emptyFields.push("Contact No");
   }
   if (!city) {
     emptyFields.push("City");
@@ -47,8 +57,11 @@ const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       name,
+      image,
+      gender,
       dob,
       email,
+      contactNo,
       city,
       state,
       password: hashedPassword,

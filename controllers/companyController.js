@@ -76,8 +76,17 @@ const sendRequest = async (req, res) => {
 
 //creating a company profile
 const createCompany = async (req, res) => {
-  const { company_name, email, password, city, state, phone_no } = req.body;
-  if (!company_name || !email || !password || !city || !state || !phone_no) {
+  const { company_name, image, email, password, city, state, contactNo } =
+    req.body;
+  if (
+    !company_name ||
+    !image ||
+    !email ||
+    !password ||
+    !city ||
+    !state ||
+    !contactNo
+  ) {
     return res.status(400).json({ message: "Please Enter In All The Fields" });
   }
   try {
@@ -88,11 +97,12 @@ const createCompany = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const company = await Company.create({
       company_name,
+      image,
       email,
       password: hashedPassword,
       city,
       state,
-      phone_no,
+      contactNo,
     });
     const token = jwt.sign({ name: company_name }, SECRET_KEY, {
       expiresIn: "1h",

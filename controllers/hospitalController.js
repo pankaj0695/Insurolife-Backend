@@ -29,10 +29,14 @@ const getInsurance = async (req, res) => {
 
 //Create a Hospital profile
 const createHospital = async (req, res) => {
-  const { hospital_name, city, state, email, password } = req.body;
+  const { hospital_name, image, city, state, email, contactNo, password } =
+    req.body;
   let emptyFields = [];
   if (!hospital_name) {
     emptyFields.push("Hospital Name");
+  }
+  if (!image) {
+    emptyFields.push("Image");
   }
   if (!city) {
     emptyFields.push("city");
@@ -42,6 +46,9 @@ const createHospital = async (req, res) => {
   }
   if (!email) {
     emptyFields.push("Email");
+  }
+  if (!contactNo) {
+    emptyFields.push("ContactNo");
   }
   if (!password) {
     emptyFields.push("Password");
@@ -61,9 +68,11 @@ const createHospital = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const hospital = await Hospital.create({
       hospital_name,
+      image,
       city,
       state,
       email,
+      contactNo,
       password: hashedPassword,
     });
     const token = jwt.sign({ name: hospital_name }, SECRET_KEY, {
