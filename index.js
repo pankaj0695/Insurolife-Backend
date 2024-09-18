@@ -23,7 +23,7 @@ app.use("/customer", userRoute);
 app.use("/insurer", companyRoute);
 app.use("/hospital", hospitalRoute);
 
-app.get("/user", async (req, res) => {
+app.post("/user", async (req, res) => {
   const { role, id } = req.body;
   switch (role) {
     case "customer":
