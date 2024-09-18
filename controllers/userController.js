@@ -87,6 +87,46 @@ const loginUser = async (req, res) => {
   }
 };
 
+const addMedicalRecord = async (req, res) => {
+  const { user_id, image } = req.body;
+  if (!image) {
+    return res.status(400).json({ message: "Enter A File" });
+  }
+  try {
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(404).json({ message: "Invalid User ID" });
+    }
+    user.medical_records.push(image);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const deleteMedicalRecord = async (req, res) => {
+  const { user_id, image } = req.body;
+  if (!image) {
+    return res.status(400).json({ message: "Choose A File" });
+  }
+  try {
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(404).json({ message: "Invalid User ID" });
+    }
+    const indexOfRecord = user.medical_records.indexOf(image);
+    if (indexOfRecord === -1) {
+      return res.status(404).json({ message: "Record Not Found" });
+    }
+    user.medical_records.splice(indexOfRecord, 1);
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "Medical record deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const getNearbyHospital = async (req, res) => {
   const { city, state } = req.body;
   try {
@@ -269,4 +309,6 @@ module.exports = {
   giveRatings,
   getAllInsurance,
   getAllCompanies,
+  addMedicalRecord,
+  deleteMedicalRecord,
 };

@@ -1,17 +1,6 @@
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 
-const medical_record = new schema({
-  doctor: {
-    type: String,
-    required: true,
-  },
-  diagnosis: {
-    type: String,
-    required: true,
-  },
-});
-
 const userSchema = new schema({
   name: {
     type: String,
@@ -45,7 +34,11 @@ const userSchema = new schema({
     type: String,
     required: true,
   },
-  medical_records: [medical_record],
+  medical_records: [
+    {
+      type: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model("User", userSchema);
