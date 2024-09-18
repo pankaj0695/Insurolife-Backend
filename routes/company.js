@@ -17,14 +17,14 @@ const {
 } = require("../controllers/companyController");
 const { authenticateToken } = require("../helpers/helper");
 
-router.post("/Request/Send", authenticateToken, sendRequest);
+router.post("/request/send", authenticateToken, sendRequest);
 router.post("/signup", createCompany);
 router.post("/login", loginCompany);
-router.post("/Insurance/New", authenticateToken, createInsurance);
-router.get("/Notifications/Pending", authenticateToken, pendingRequest);
-router.get("/Notifications/Accepted", authenticateToken, acceptedRequest);
-router.get("/Notifications/Declined", authenticateToken, declinedRequest);
-router.patch("/Insurance/insurance_id", authenticateToken, updateDiscount);
+router.post("/insurance/new", authenticateToken, createInsurance);
+router.get("/notifications/pending", authenticateToken, pendingRequest);
+router.get("/notifications/accepted", authenticateToken, acceptedRequest);
+router.get("/notifications/declined", authenticateToken, declinedRequest);
+router.patch("/insurance/insurance_id", authenticateToken, updateDiscount);
 router.patch("/appointments", authenticateToken, scheduleAppointment);
 router.get("/appointments", authenticateToken, getAllAppointments);
 router.patch("/appointments/approved", authenticateToken, markAsDone);

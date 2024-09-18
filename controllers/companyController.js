@@ -130,22 +130,32 @@ const loginCompany = async (req, res) => {
 };
 
 const createInsurance = async (req, res) => {
-  const { company_id, insurance_name, claim, compatibility, emi } = req.body;
+  const { insurance_name, insurer, logo, claim, premium, tags, description } =
+    req.body;
   const emptyFields = [];
-  if (!company_id) {
-    emptyFields.push("Company ID");
-  }
+  // if (!company_id) {
+  //   emptyFields.push("Company ID");
+  // }
   if (!insurance_name) {
     emptyFields.push("Insurance Name");
+  }
+  if (!insurer) {
+    emptyFields.push("Insurer Name");
+  }
+  if (!logo) {
+    emptyFields.push("Insurer Logo");
   }
   if (!claim) {
     emptyFields.push("Claim");
   }
-  if (!compatibility) {
-    emptyFields.push("Compatibility");
+  if (!premium) {
+    emptyFields.push("Premium");
   }
-  if (!emi) {
-    emptyFields.push("EMI");
+  if (!tags) {
+    emptyFields.push("Tags");
+  }
+  if (!description) {
+    emptyFields.push("Description");
   }
   if (emptyFields.length > 0) {
     return res
@@ -158,11 +168,13 @@ const createInsurance = async (req, res) => {
       return res.status(400).json({ message: "Insurance Already Exists" });
     }
     const insurance = await Insurance.create({
-      company_id,
       insurance_name,
+      insurer,
+      logo,
       claim,
-      compatibility,
-      emi,
+      premium,
+      tags,
+      description,
     });
     res.status(200).json({ insurance });
   } catch (error) {

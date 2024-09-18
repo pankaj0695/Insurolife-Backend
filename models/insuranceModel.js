@@ -5,9 +5,17 @@ const insuranceSchema = new schema({
   company_id: {
     type: schema.Types.ObjectId,
     ref: "Company",
-    required: true,
+    // required: true,
   },
   insurance_name: {
+    type: String,
+    required: true,
+  },
+  insurer: {
+    type: String,
+    required: true,
+  },
+  logo: {
     type: String,
     required: true,
   },
@@ -15,12 +23,13 @@ const insuranceSchema = new schema({
     type: Number,
     required: true,
   },
-  compatibility: {
-    type: String,
+  premium: {
+    type: Number,
     required: true,
   },
-  emi: {
-    type: Number,
+  tags: [{ type: String }],
+  description: {
+    type: String,
     required: true,
   },
   discounted_emi: {
