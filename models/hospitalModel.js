@@ -15,9 +15,12 @@ const hospitalSchema = new schema({
     type: String,
     required: true,
   },
-  insurance_id: {
-    type: String,
-  },
+  insurance_id: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Insurance",
+    },
+  ],
   requests: [
     {
       type: mongoose.Schema.Types.ObjectId,

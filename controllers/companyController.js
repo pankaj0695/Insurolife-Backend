@@ -76,8 +76,8 @@ const sendRequest = async (req, res) => {
 
 //creating a company profile
 const createCompany = async (req, res) => {
-  const { company_name, email, password } = req.body;
-  if (!company_name || !email || !password) {
+  const { company_name, email, password, city, state, phone_no } = req.body;
+  if (!company_name || !email || !password || !city || !state || !phone_no) {
     return res.status(400).json({ message: "Please Enter In All The Fields" });
   }
   try {
@@ -90,6 +90,9 @@ const createCompany = async (req, res) => {
       company_name,
       email,
       password: hashedPassword,
+      city,
+      state,
+      phone_no,
     });
     const token = jwt.sign({ name: company_name }, SECRET_KEY, {
       expiresIn: "1h",
