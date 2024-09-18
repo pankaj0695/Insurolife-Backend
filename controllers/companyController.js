@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const session = require("express-session");
 
 const Company = require("../models/companyModel");
 const Hospital = require("../models/hospitalModel");
@@ -8,6 +7,7 @@ const Request = require("../models/insuranceRequestModel");
 const Insurance = require("../models/insuranceModel");
 const Appointment = require("../models/appointmentModel");
 const User = require("../models/userModel");
+const Counsellor = require("../models/counsellorModel");
 
 const { getAccessToken, generateZoomLink } = require("./appointmentCall");
 const { SECRET_KEY } = require("../helpers/helper");
@@ -279,6 +279,7 @@ const getAllAppointments = async (req, res) => {
   }
 };
 
+//Not Tested Properly, might Glitch
 const scheduleAppointment = async (req, res) => {
   const { company_id, appointment_id, status, date } = req.body;
   if (!company_id) {
@@ -359,6 +360,85 @@ const scheduleAppointment = async (req, res) => {
   }
 };
 
+const markAsDone = async (req, res) => {
+  const { appointment_id } = req.body;
+  const appointment = await Appointment.findById(appointment_id);
+  if (!appointment) {
+    return res.status(404).json({ message: "Appointment Not Found" });
+  }
+  if (appointment.status === "Accepted") {
+    appointment.status = "Completed";
+    try {
+      await appointment.save();
+      res.status(200).json(appointment);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  } else {
+    res.status(400).json({ message: "Some Error Occured" });
+  }
+};
+
+const newCounsellor = async (req, res) => {
+  const { name, company_id, description, phone_no, email } = req.body;
+  const emptyFields = [];
+  if (!name) {
+    emptyFields.push("Name");
+  }
+  if (!company_id) {
+    emptyFields.push("Company ID");
+  }
+  if (!phone_no) {
+    emptyFields.push("Phone No");
+  }
+  if (!email) {
+    emptyFields.push("Email");
+  }
+
+  if (emptyFields.length !== 0) {
+    return res
+      .status(400)
+      .json({ message: "Please Enter in all the Fields", emptyFields });
+  }
+  try {
+    const existingCounsellor = await Counsellor.findOne({ email });
+    if (existingCounsellor) {
+      return res
+        .status(400)
+        .json({ message: "This email is already Registered" });
+    }
+    const company = await Company.findById(company_id);
+    if (!company) {
+      return res.status(404).json({ message: "Company Not Found" });
+    }
+    const counsellor = await Counsellor.create({
+      name,
+      company_id,
+      description,
+      phone_no,
+      email,
+    });
+    if (!counsellor) {
+      return res.status(500).json({ message: "Some Error Occured" });
+    }
+    res.status(200).json(counsellor);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getAllCounsellor = async (req, res) => {
+  const { company_id } = req.body;
+  if (!company_id) {
+    return res.status(404).json({ message: "Company Required" });
+  }
+  const counsellor = await Counsellor.find({ company_id });
+  if (counsellor.length === 0) {
+    return res.status(404).json({ message: "No counsellors" });
+  }
+  res.status(200).json({ counsellor });
+};
+
 module.exports = {
   sendRequest,
   createCompany,
@@ -370,4 +450,7 @@ module.exports = {
   updateDiscount,
   getAllAppointments,
   scheduleAppointment,
+  markAsDone,
+  newCounsellor,
+  getAllCounsellor,
 };

@@ -18,10 +18,12 @@ const counsellorSchema = new schema({
   ],
   phone_no: {
     type: String,
+    required: true,
   },
   email: {
     type: String,
+    required: true,
   },
 });
 
-module.exports = mongoose.model("Counselor", counsellorSchema);
+module.exports = mongoose.model("Counsellor", counsellorSchema);

@@ -11,6 +11,9 @@ const {
   updateDiscount,
   getAllAppointments,
   scheduleAppointment,
+  markAsDone,
+  getAllCounsellor,
+  newCounsellor,
 } = require("../controllers/companyController");
 const { authenticateToken } = require("../helpers/helper");
 
@@ -24,4 +27,7 @@ router.get("/Notifications/Declined", authenticateToken, declinedRequest);
 router.patch("/Insurance/insurance_id", authenticateToken, updateDiscount);
 router.patch("/appointments", authenticateToken, scheduleAppointment);
 router.get("/appointments", authenticateToken, getAllAppointments);
+router.patch("/appointments/approved", authenticateToken, markAsDone);
+router.get("/counsellor", authenticateToken, getAllCounsellor);
+router.post("/counsellor", authenticateToken, newCounsellor);
 module.exports = router;
