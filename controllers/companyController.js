@@ -405,13 +405,17 @@ const markAsDone = async (req, res) => {
 };
 
 const newCounsellor = async (req, res) => {
-  const { name, company_id, tags, phone_no, email, image } = req.body;
+  const { name, company_id, company_logo, tags, phone_no, email, image } =
+    req.body;
   const emptyFields = [];
   if (!name) {
     emptyFields.push("Name");
   }
   if (!image) {
-    emptyFields.push("Name");
+    emptyFields.push("Image");
+  }
+  if (!company_logo) {
+    emptyFields.push("Company Logo");
   }
   if (!company_id) {
     emptyFields.push("Company ID");
@@ -443,6 +447,7 @@ const newCounsellor = async (req, res) => {
       name,
       image,
       company_id,
+      company_logo,
       tags,
       phone_no,
       email,

@@ -15,6 +15,10 @@ const counsellorSchema = new schema({
     ref: "Company",
     required: true,
   },
+  company_logo: {
+    type: String,
+    required: true,
+  },
   tags: [
     {
       type: String,
