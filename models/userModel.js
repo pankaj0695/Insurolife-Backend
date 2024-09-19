@@ -48,7 +48,26 @@ const userSchema = new schema({
   },
   medical_records: [
     {
-      type: String,
+      date: {
+        type: String,
+        required: true,
+        validate: {
+          validator: function (v) {
+            // Basic validation for dd-mm-yyyy format
+            return /^\d{4}-\d{2}-\d{2}$/.test(v);
+          },
+          message: (props) =>
+            `${props.value} is not a valid date format! Use dd-mm-yyyy`,
+        },
+      },
+      image: {
+        type: String,
+        required: true,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
     },
   ],
 });
