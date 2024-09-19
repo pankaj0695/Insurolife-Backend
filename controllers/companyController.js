@@ -9,7 +9,6 @@ const Appointment = require("../models/appointmentModel");
 const User = require("../models/userModel");
 const Counsellor = require("../models/counsellorModel");
 
-const { getAccessToken, generateZoomLink } = require("./appointmentCall");
 const { SECRET_KEY } = require("../helpers/helper");
 
 const sendRequest = async (req, res) => {
@@ -306,7 +305,7 @@ const getAllAppointments = async (req, res) => {
 
 //Not Tested Properly, might Glitch
 const scheduleAppointment = async (req, res) => {
-  const { company_id, appointment_id, status, date } = req.body;
+  const { company_id, appointment_id, status, date, zoomLink } = req.body;
   if (!company_id) {
     return res.status(400).json({ message: "Error in selecting the company" });
   }
@@ -319,7 +318,9 @@ const scheduleAppointment = async (req, res) => {
   if (!date) {
     return res.status(400).json({ message: "Select A Date" });
   }
-
+  if (!zoomLink) {
+    return res.status(400).json({ message: "Provide Meeting Link" });
+  }
   try {
     const company = await Company.findById(company_id);
     if (!company) {
@@ -335,41 +336,14 @@ const scheduleAppointment = async (req, res) => {
     switch (status) {
       case "Accept":
         //Meeting link to be sent in Appointment.meeting here
-        try {
-          if (!req.query.code) {
-            return res.redirect(
-              `${process.env.ZOOM_AUTHORIZE_URI}&state=${appointment_id},${company_id},${status},${date}`
-            );
-          }
-          const code = req.query.code;
-          const [Appointment_id, Company_id, Status, Date] =
-            req.query.state.split(",");
-          if (!code) {
-            return res
-              .status(400)
-              .json({ message: "Authorization code missing." });
-          }
-          const tokenData = await getAccessToken(code);
-          const accessToken = tokenData.access_token;
-          const meetingDate = date + "T" + appointment.timing + ":00Z";
-          // Generate the Zoom link
-          const zoomLink = await generateZoomLink(accessToken, meetingDate);
-
-          // Store the Zoom meeting link in the appointment
-          appointment.meetingLink = zoomLink;
-          appointment.status = "Accepted";
-          appointment.date = Date;
-          await appointment.save();
-
-          return res.status(200).json({
-            message: "Appointment Accepted",
-            appointment,
-            zoomLink,
-          });
-        } catch (error) {
-          res.status(500).json({ error: error.message });
-        }
+        await Appointment.findByIdAndUpdate(appointment_id, {
+          status: "Declined",
+          meeting: zoomLink,
+        });
+        appointment.status = "Declined";
+        appointment.meeting = zoomLink;
         break;
+
       case "Decline":
         await Appointment.findByIdAndUpdate(appointment_id, {
           status: "Declined",
