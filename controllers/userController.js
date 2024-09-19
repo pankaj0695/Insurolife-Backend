@@ -101,16 +101,22 @@ const loginUser = async (req, res) => {
 };
 
 const addMedicalRecord = async (req, res) => {
-  const { user_id, image } = req.body;
+  const { user_id, date, image, description } = req.body;
   if (!image) {
-    return res.status(400).json({ message: "Enter A File" });
+    return res.status(400).json({ message: "Enter A Image File" });
+  }
+  if (!date) {
+    return res.status(400).json({ message: "Enter Date" });
+  }
+  if (!description) {
+    return res.status(400).json({ message: "Enter A Description" });
   }
   try {
     const user = await User.findById(user_id);
     if (!user) {
       return res.status(404).json({ message: "Invalid User ID" });
     }
-    user.medical_records.push(image);
+    user.medical_records.push({ date, image, description });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -126,7 +132,11 @@ const deleteMedicalRecord = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Invalid User ID" });
     }
-    const indexOfRecord = user.medical_records.indexOf(image);
+
+    const indexOfRecord = user.medical_records.findIndex(
+      (record) => record.image == image
+    );
+
     if (indexOfRecord === -1) {
       return res.status(404).json({ message: "Record Not Found" });
     }
