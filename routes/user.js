@@ -15,8 +15,12 @@ const { authenticateToken } = require("../helpers/helper");
 
 router.post("/signup", createUser);
 router.post("/login", loginUser);
-router.post("/profile/medical_records", addMedicalRecord);
-router.patch("/profile/medical_records", deleteMedicalRecord);
+router.post("/profile/medical_records", authenticateToken, addMedicalRecord);
+router.patch(
+  "/profile/medical_records",
+  authenticateToken,
+  deleteMedicalRecord
+);
 router.post("/hospital-id/ratings", authenticateToken, giveRatings);
 router.get("/user-id/hospitals", authenticateToken, getNearbyHospital);
 router.get("/user-id/insurance", authenticateToken, getAllInsurance);
