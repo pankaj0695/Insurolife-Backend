@@ -45,11 +45,11 @@ const hospitalSchema = new schema({
   },
   ratingCount: {
     type: Number,
-    default: 0,
+    default: 5,
   },
   avgRating: {
     type: Number,
-    default: 0,
+    default: 4,
   },
 });
 

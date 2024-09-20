@@ -153,26 +153,15 @@ const deleteMedicalRecord = async (req, res) => {
 
 const getNearbyHospital = async (req, res) => {
   const { city, state } = req.body;
+  let nearbyHospitals;
   try {
     if (!city && !state) {
-      const nearbyHospitals = await Hospital.find();
-      if (nearbyHospitals.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "No Registered Hospitals in your area" });
-      }
-      res.status(200).json(nearbyHospitals);
+      nearbyHospitals = await Hospital.find();
+    } else if (!city) {
+      nearbyHospitals = await Hospital.find({ state });
+    } else {
+      nearbyHospitals = await Hospital.find({ city, state });
     }
-    if (!city) {
-      const nearbyHospitals = await Hospital.find({ state });
-      if (nearbyHospitals.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "No Registered Hospitals in your area" });
-      }
-      res.status(200).json(nearbyHospitals);
-    }
-    const nearbyHospitals = await Hospital.find({ city, state });
     if (nearbyHospitals.length === 0) {
       return res
         .status(200)
