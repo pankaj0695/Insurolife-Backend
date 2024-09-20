@@ -450,7 +450,9 @@ const newCounsellor = async (req, res) => {
     if (!counsellor) {
       return res.status(500).json({ message: "Some Error Occured" });
     }
-    res.status(200).json({ counsellor });
+    const insurer = await Company.findById(company_id);
+    const insurer_name = insurer.company_name;
+    res.status(200).json({ ...counsellor, insurer: insurer_name });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
