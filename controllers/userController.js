@@ -118,6 +118,7 @@ const addMedicalRecord = async (req, res) => {
       return res.status(404).json({ message: "Invalid User ID" });
     }
     user.medical_records.push({ date, image, description });
+    user.save();
     res.status(200).json({ user_id, date, image, description });
   } catch (error) {
     res.status(500).json({ error: error.message });
