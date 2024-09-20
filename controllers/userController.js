@@ -172,6 +172,21 @@ const getNearbyHospital = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getHospital = async (req, res) => {
+  const { hospital_id } = req.body;
+  if (!hospital_id) {
+    return res.status(400).json({ message: "Please provide Hospital ID" });
+  }
+  try {
+    const hospital = await Hospital.findById(hospital_id);
+    if (!hospital) {
+      return res.status(400).json({ message: "Hospital Not Found" });
+    }
+    res.status(200).json(hospital);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 //For dropdown of companies
 const getAllCompanies = async (req, res) => {
@@ -356,4 +371,5 @@ module.exports = {
   addMedicalRecord,
   deleteMedicalRecord,
   getInsurance,
+  getHospital,
 };
