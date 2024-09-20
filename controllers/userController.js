@@ -155,7 +155,13 @@ const getNearbyHospital = async (req, res) => {
   const { city, state } = req.body;
   try {
     if (!city && !state) {
-      return res.status(400).json({ message: "Some Error Occured" });
+      const nearbyHospitals = await Hospital.find();
+      if (nearbyHospitals.length === 0) {
+        return res
+          .status(200)
+          .json({ message: "No Registered Hospitals in your area" });
+      }
+      res.status(200).json(nearbyHospitals);
     }
     if (!city) {
       const nearbyHospitals = await Hospital.find({ state });
