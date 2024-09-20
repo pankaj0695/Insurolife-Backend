@@ -14,6 +14,7 @@ const {
   markAsDone,
   getAllCounsellor,
   newCounsellor,
+  allInsurances,
 } = require("../controllers/companyController");
 const { authenticateToken } = require("../helpers/helper");
 
@@ -21,6 +22,7 @@ router.post("/request/send", authenticateToken, sendRequest);
 router.post("/signup", createCompany);
 router.post("/login", loginCompany);
 router.post("/insurance/new", authenticateToken, createInsurance);
+router.post("/notifications", authenticateToken, allInsurances);
 router.get("/notifications/pending", authenticateToken, pendingRequest);
 router.get("/notifications/accepted", authenticateToken, acceptedRequest);
 router.get("/notifications/declined", authenticateToken, declinedRequest);

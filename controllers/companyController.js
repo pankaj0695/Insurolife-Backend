@@ -252,6 +252,22 @@ const acceptedRequest = async (req, res) => {
   }
 };
 
+const allInsurances = async (req, res) => {
+  const { company_id } = req.body;
+  if (!company_id) {
+    return res.status(400).json({ message: "Please Provide The Company ID" });
+  }
+  try {
+    const insurances = await Insurance.find({ company_id });
+    if (insurances.length === 0) {
+      return res.status(404).json({ message: "No Insurance Registered" });
+    }
+    res.status(200).json(insurances);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 const declinedRequest = async (req, res) => {
   const { company_id } = req.body;
   if (!company_id) {
@@ -496,4 +512,5 @@ module.exports = {
   markAsDone,
   newCounsellor,
   getAllCounsellor,
+  allInsurances,
 };
