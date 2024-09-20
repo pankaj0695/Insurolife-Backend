@@ -334,6 +334,22 @@ const giveRatings = async (req, res) => {
   }
 };
 
+const getInsurance = async (req, res) => {
+  const { insurance_id } = req.body;
+  if (!insurance_id) {
+    return res.status(400).json({ message: "Please Provide Insurance ID" });
+  }
+  try {
+    const insurance = await Insurance.findById(_id);
+    if (!insurance) {
+      return res.status(404).json({ message: "Insurance Not Found" });
+    }
+    res.status(200).json(insurance);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -344,4 +360,5 @@ module.exports = {
   getAllCompanies,
   addMedicalRecord,
   deleteMedicalRecord,
+  getInsurance,
 };
