@@ -29,7 +29,7 @@ router.get("/get-hospitals", authenticateToken, getNearbyHospital);
 router.post("/get-hospital", authenticateToken, getHospital);
 router.get("/get-insurances", authenticateToken, getAllInsurance);
 router.get("/user-id/companies", authenticateToken, getAllCompanies);
-router.post("/user-id/book-appointment", authenticateToken, bookAppointment);
+router.post("/book-appointment", authenticateToken, bookAppointment);
 router.post("/get-insurance", authenticateToken, getInsurance);
 router.get("/get-counsellors", authenticateToken, getAllCounsellor);
 
