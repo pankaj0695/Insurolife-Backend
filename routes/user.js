@@ -26,7 +26,7 @@ router.patch(
 );
 router.post("/hospital-id/ratings", authenticateToken, giveRatings);
 router.get("/get-hospitals", authenticateToken, getNearbyHospital);
-router.get("/get-hospital", authenticateToken, getHospital);
+router.post("/get-hospital", authenticateToken, getHospital);
 router.get("/get-insurances", authenticateToken, getAllInsurance);
 router.get("/user-id/companies", authenticateToken, getAllCompanies);
 router.post("/user-id/book-appointment", authenticateToken, bookAppointment);
