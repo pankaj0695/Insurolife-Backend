@@ -31,6 +31,6 @@ router.get("/get-insurances", authenticateToken, getAllInsurance);
 router.get("/user-id/companies", authenticateToken, getAllCompanies);
 router.post("/user-id/book-appointment", authenticateToken, bookAppointment);
 router.post("/get-insurance", authenticateToken, getInsurance);
-router.post("/get-counsellors", authenticateToken, getAllCounsellor);
+router.get("/get-counsellors", authenticateToken, getAllCounsellor);
 
 module.exports = router;
