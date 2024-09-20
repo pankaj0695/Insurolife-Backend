@@ -22,8 +22,8 @@ router.patch(
   deleteMedicalRecord
 );
 router.post("/hospital-id/ratings", authenticateToken, giveRatings);
-router.get("/user-id/hospitals", authenticateToken, getNearbyHospital);
-router.get("/user-id/insurance", authenticateToken, getAllInsurance);
+router.get("/get-hospitals", authenticateToken, getNearbyHospital);
+router.get("/get-insurances", authenticateToken, getAllInsurance);
 router.get("/user-id/companies", authenticateToken, getAllCompanies);
 router.post("/user-id/book-appointment", authenticateToken, bookAppointment);
 
