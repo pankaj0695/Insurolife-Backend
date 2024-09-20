@@ -351,7 +351,7 @@ const getInsurance = async (req, res) => {
     return res.status(400).json({ message: "Please Provide Insurance ID" });
   }
   try {
-    const insurance = await Insurance.findById(_id);
+    const insurance = await Insurance.findById(insurance_id);
     if (!insurance) {
       return res.status(404).json({ message: "Insurance Not Found" });
     }
