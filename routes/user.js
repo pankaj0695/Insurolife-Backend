@@ -12,6 +12,7 @@ const {
   deleteMedicalRecord,
   getInsurance,
   getHospital,
+  getAllCounsellor,
 } = require("../controllers/userController");
 const { authenticateToken } = require("../helpers/helper");
 
@@ -30,5 +31,6 @@ router.get("/get-insurances", authenticateToken, getAllInsurance);
 router.get("/user-id/companies", authenticateToken, getAllCompanies);
 router.post("/user-id/book-appointment", authenticateToken, bookAppointment);
 router.get("/get-insurance", authenticateToken, getInsurance);
+router.get("/get-counsellors", authenticateToken, getAllCounsellor);
 
 module.exports = router;

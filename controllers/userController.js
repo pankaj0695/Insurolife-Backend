@@ -7,6 +7,7 @@ const Company = require("../models/companyModel");
 const Appointment = require("../models/appointmentModel");
 const Insurance = require("../models/insuranceModel");
 const Rating = require("../models/ratingModel");
+const Counsellor = require("../models/counsellorModel");
 
 const { SECRET_KEY } = require("../helpers/helper");
 
@@ -360,6 +361,18 @@ const getInsurance = async (req, res) => {
   }
 };
 
+const getAllCounsellor = async (req, res) => {
+  try {
+    const counsellor = await Counsellor.find();
+    if (counsellor.length === 0) {
+      return res.status(404).json({ message: "No Counsellors" });
+    }
+    res.status(200).json(counsellor);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -372,4 +385,5 @@ module.exports = {
   deleteMedicalRecord,
   getInsurance,
   getHospital,
+  getAllCounsellor,
 };
