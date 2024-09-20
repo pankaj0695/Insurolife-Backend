@@ -139,12 +139,20 @@ const loginCompany = async (req, res) => {
 };
 
 const createInsurance = async (req, res) => {
-  const { insurance_name, insurer, logo, claim, premium, tags, description } =
-    req.body;
+  const {
+    company_id,
+    insurance_name,
+    insurer,
+    logo,
+    claim,
+    premium,
+    tags,
+    description,
+  } = req.body;
   const emptyFields = [];
-  // if (!company_id) {
-  //   emptyFields.push("Company ID");
-  // }
+  if (!company_id) {
+    emptyFields.push("Company ID");
+  }
   if (!insurance_name) {
     emptyFields.push("Insurance Name");
   }
@@ -184,6 +192,19 @@ const createInsurance = async (req, res) => {
       premium,
       tags,
       description,
+    });
+    const insurance_id = insurance._id;
+    const hospital_ids = await Hospital.find();
+    if (hospital_ids.length === 0) {
+      return res.status(404).json({ message: "No Hospitals" });
+    }
+    hospital_ids.map(async (hospital_id) => {
+      await Request.create({
+        hospital_id,
+        company_id,
+        insurance_id,
+        status: "Pending",
+      });
     });
     res.status(200).json({ insurance });
   } catch (error) {
