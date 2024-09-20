@@ -363,14 +363,18 @@ const getInsurance = async (req, res) => {
 
 const getAllCounsellor = async (req, res) => {
   try {
-    const counsellor = await Counsellor.find();
-    if (counsellor.length === 0) {
+    const counsellors = await Counsellor.find();
+    if (counsellors.length === 0) {
       return res.status(404).json({ message: "No Counsellors" });
     }
-    const company_id = counsellor.company_id;
-    const insurer = await Company.findById(company_id);
-    const insurer_name = insurer.company_name;
-    res.status(200).json({ ...counsellor, insurer: insurer_name });
+
+    const newCounsellor = counsellors.map(async (counsellor) => {
+      const company_id = counsellor.company_id;
+      const insurer = await Company.findById(company_id);
+      const insurer_name = insurer.company_name;
+      return { ...counsellor, insurer: insurer_name };
+    });
+    res.status(200).json(newCounsellor);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
