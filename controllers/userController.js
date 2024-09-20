@@ -367,7 +367,10 @@ const getAllCounsellor = async (req, res) => {
     if (counsellor.length === 0) {
       return res.status(404).json({ message: "No Counsellors" });
     }
-    res.status(200).json(counsellor);
+    const company_id = counsellor.company_id;
+    const insurer = await Company.findById(company_id);
+    const insurer_name = insurer.company_name;
+    res.status(200).json({ ...counsellor, insurer: insurer_name });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
