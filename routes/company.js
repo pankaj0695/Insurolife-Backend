@@ -9,7 +9,8 @@ const {
   acceptedRequest,
   declinedRequest,
   updateDiscount,
-  getAllAppointments,
+  getAppointmentsByCompanyId,
+  getAppointmentsByUserId,
   scheduleAppointment,
   markAsDone,
   getAllCounsellor,
@@ -28,7 +29,16 @@ router.get("/notifications/accepted", authenticateToken, acceptedRequest);
 router.get("/notifications/declined", authenticateToken, declinedRequest);
 router.patch("/insurance/insurance_id", authenticateToken, updateDiscount);
 router.patch("/appointments", authenticateToken, scheduleAppointment);
-router.get("/appointments", authenticateToken, getAllAppointments);
+router.post(
+  "/get-appointments-company",
+  authenticateToken,
+  getAppointmentsByCompanyId
+);
+router.post(
+  "/get-appointments-user",
+  authenticateToken,
+  getAppointmentsByUserId
+);
 router.patch("/appointments/approved", authenticateToken, markAsDone);
 router.get("/counsellor", authenticateToken, getAllCounsellor);
 router.post("/counsellor", authenticateToken, newCounsellor);

@@ -251,7 +251,14 @@ const getAllInsurance = async (req, res) => {
 //Completed Appointment function
 const bookAppointment = async (req, res) => {
   //These ID's are mongodb object
-  const { user_id, company_id, counsellor, date, timing } = req.body;
+  const {
+    user_id,
+    company_id,
+    counsellor_name,
+    counsellor_image,
+    date,
+    timing,
+  } = req.body;
   const emptyFields = [];
   if (!user_id) {
     emptyFields.push("User ID");
@@ -289,7 +296,8 @@ const bookAppointment = async (req, res) => {
     user_id,
     date,
     company_id,
-    counsellor,
+    counsellor_name,
+    counsellor_image,
     timing,
     status,
   });

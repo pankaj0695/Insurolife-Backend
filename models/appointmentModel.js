@@ -14,8 +14,13 @@ const appointmentSchema = new schema(
       ref: "Company",
       required: true,
     },
-    counsellor: {
+    counsellor_name: {
       type: String,
+      required: true,
+    },
+    counsellor_image: {
+      type: String,
+      required: true,
     },
     date: {
       type: String,

@@ -310,7 +310,7 @@ const updateDiscount = async (req, res) => {
   }
 };
 
-const getAllAppointments = async (req, res) => {
+const getAppointmentsByCompanyId = async (req, res) => {
   const { company_id } = req.body;
   if (!company_id) {
     return res.status(400).json({ message: "Please provide Company ID" });
@@ -323,18 +323,26 @@ const getAllAppointments = async (req, res) => {
       return res.status(404).json({ message: "No Appointments Found" });
     }
 
-    const appointmentDetails = await Promise.all(
-      appointments.map(async (appointment) => {
-        const user = await User.findOne({ _id: appointment.user_id });
-
-        return {
-          appointment,
-          user: user || null,
-        };
-      })
-    );
-
     res.status(200).json({ appointmentDetails });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getAppointmentsByUserId = async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id) {
+    return res.status(400).json({ message: "Please provide User ID" });
+  }
+
+  try {
+    const appointments = await Appointment.find({ user_id });
+
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No Appointments Found" });
+    }
+
+    res.status(200).json({ appointments });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -507,7 +515,8 @@ module.exports = {
   acceptedRequest,
   declinedRequest,
   updateDiscount,
-  getAllAppointments,
+  getAppointmentsByCompanyId,
+  getAppointmentsByUserId,
   scheduleAppointment,
   markAsDone,
   newCounsellor,
