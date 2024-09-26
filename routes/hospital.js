@@ -12,8 +12,8 @@ const { authenticateToken } = require("../helpers/helper");
 router.post("/signup", createHospital);
 router.post("/login", loginHospital);
 router.patch("/notifications", authenticateToken, acceptOrDeclineRequest);
-router.get("/notifications", authenticateToken, getAllRequests);
+router.get("/get-requests", authenticateToken, getAllRequests);
 
-router.get("/:hospital_name", authenticateToken, getInsurance);
+router.get("/get-insurances", authenticateToken, getInsurance);
 
 module.exports = router;

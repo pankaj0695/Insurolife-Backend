@@ -23,7 +23,7 @@ router.post("/request/send", authenticateToken, sendRequest);
 router.post("/signup", createCompany);
 router.post("/login", loginCompany);
 router.post("/insurance/new", authenticateToken, createInsurance);
-router.post("/notifications", authenticateToken, allInsurances);
+router.post("/get-insurances", authenticateToken, allInsurances);
 router.get("/notifications/pending", authenticateToken, pendingRequest);
 router.get("/notifications/accepted", authenticateToken, acceptedRequest);
 router.get("/notifications/declined", authenticateToken, declinedRequest);
@@ -40,6 +40,6 @@ router.post(
   getAppointmentsByUserId
 );
 router.patch("/appointments/approved", authenticateToken, markAsDone);
-router.get("/counsellor", authenticateToken, getAllCounsellor);
+router.get("/get-counsellors", authenticateToken, getAllCounsellor);
 router.post("/counsellor", authenticateToken, newCounsellor);
 module.exports = router;
