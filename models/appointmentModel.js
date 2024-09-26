@@ -5,12 +5,12 @@ const Company = require("./companyModel");
 const appointmentSchema = new schema(
   {
     user_id: {
-      type: schema.Types.ObjectId,
+      type: String,
       ref: "User",
       required: true,
     },
     company_id: {
-      type: schema.Types.ObjectId,
+      type: String,
       ref: "Company",
       required: true,
     },

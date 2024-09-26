@@ -30,12 +30,12 @@ router.get("/notifications/declined", authenticateToken, declinedRequest);
 router.patch("/insurance/insurance_id", authenticateToken, updateDiscount);
 router.patch("/appointments", authenticateToken, scheduleAppointment);
 router.post(
-  "/get-appointments-company",
+  "/get-company-appointments",
   authenticateToken,
   getAppointmentsByCompanyId
 );
 router.post(
-  "/get-appointments-user",
+  "/get-user-appointments",
   authenticateToken,
   getAppointmentsByUserId
 );
