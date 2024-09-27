@@ -143,39 +143,53 @@ const getAllRequests = async (req, res) => {
   }
 };
 
-//Operate on the insurance request
 const acceptOrDeclineRequest = async (req, res) => {
   try {
     const { request_id, status } = req.body;
+
     if (!request_id) {
-      return res.status(404).json({ message: "Request Does not Exist" });
+      return res.status(404).json({ message: "Request Does Not Exist" });
     }
-    if (!status || (status != "Accepted" && status != "Declined")) {
+    if (!status || (status !== "Accepted" && status !== "Declined")) {
       return res.status(400).json({ message: "Invalid Status" });
     }
+
     const request = await Request.findById(request_id);
-    const hospital = await Hospital.findById(request.hospital_id);
-    if (status === "Accepted") {
-      hospital.insurance_id.push(request.insurance_id);
-      hospital.save();
+    if (!request) {
+      return res.status(404).json({ message: "Request Not Found" });
     }
-    const updateRequest = await Request.findByIdAndUpdate(
+
+    const hospital = await Hospital.findById(request.hospital_id);
+    if (!hospital) {
+      return res.status(404).json({ message: "Hospital Not Found" });
+    }
+
+    if (status === "Accepted") {
+      if (!hospital.insurance_id.includes(request.insurance_id)) {
+        hospital.insurance_id.push(request.insurance_id);
+      } else {
+        return res.status(400).json({ message: "Insurance already added" });
+      }
+    }
+    await hospital.save();
+
+    const updatedRequest = await Request.findByIdAndUpdate(
       request_id,
-      {
-        status: status,
-      },
+      { status },
       { new: true }
     );
 
-    if (!updateRequest) {
-      return res.status(404).json({ message: "Request Does not Exist" });
+    if (!updatedRequest) {
+      return res.status(404).json({ message: "Request Not Found" });
     }
-    // const request = Request.findByIdAndUpdate(_id, acceptedRequest);
-    res.status(200).json({ updateRequest });
+
+    res.status(200).json({ updatedRequest });
+
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
+
 
 //Not to be used Functions!!!!
 //Complete Appointment Function

@@ -323,7 +323,7 @@ const getAppointmentsByCompanyId = async (req, res) => {
       return res.status(404).json({ message: "No Appointments Found" });
     }
 
-    res.status(200).json({ appointmentDetails });
+    res.status(200).json({ appointments });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
