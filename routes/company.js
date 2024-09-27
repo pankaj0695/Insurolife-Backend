@@ -40,6 +40,6 @@ router.post(
   getAppointmentsByUserId
 );
 router.patch("/appointments/approved", authenticateToken, markAsDone);
-router.get("/get-counsellors", authenticateToken, getAllCounsellor);
+router.post("/get-counsellors", authenticateToken, getAllCounsellor);
 router.post("/counsellor", authenticateToken, newCounsellor);
 module.exports = router;
