@@ -53,32 +53,12 @@ app.post("/user", async (req, res) => {
       break;
   }
 });
-// app.use(
-//   session({
-//     secret: "G4A88G4AL",
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { secure: false }, // Set to `true` in production with HTTPS
-//   })
-// );
 
 app.post("/s3url", async (req, res) => {
   const { imgExtension } = req.body;
   const url = await generateUploadURL(imgExtension);
   res.send({ url });
 });
-
-// app.get("/zoom/call", async (req, res) => {
-//   const code = req.query.code; // Capture the authorization code
-//   console.log(code);
-//   if (!code) {
-//     return res.status(400).json({ message: "No authorization code found." });
-//   }
-//   res.redirect("/insurer/appointments");
-// });
-// app.get("/zoom/auth", (req, res) => {
-//   res.redirect(process.env.ZOOM_AUTHORIZE_URI);
-// });
 
 mongoose
   .connect(MONGODB_URI)
