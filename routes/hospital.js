@@ -12,7 +12,7 @@ const { authenticateToken } = require("../helpers/helper");
 router.post("/signup", createHospital);
 router.post("/login", loginHospital);
 router.patch("/notifications", authenticateToken, acceptOrDeclineRequest);
-router.get("/get-requests", authenticateToken, getAllRequests);
+router.post("/get-requests", authenticateToken, getAllRequests);
 
 router.get("/get-insurances", authenticateToken, getInsurance);
 

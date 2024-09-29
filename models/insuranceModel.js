@@ -5,7 +5,7 @@ const insuranceSchema = new schema({
   company_id: {
     type: schema.Types.ObjectId,
     ref: "Company",
-    // required: true,
+    required: true,
   },
   insurance_name: {
     type: String,

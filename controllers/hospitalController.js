@@ -115,7 +115,7 @@ const getAllRequests = async (req, res) => {
   const { hospital_id } = req.body;
 
   try {
-    const hospital = await Hospital.findById(hospital_id).select("requests");
+    const hospital = await Hospital.findById(hospital_id);
 
     if (!hospital) {
       return res.status(404).json({ message: "Hospital not found" });
@@ -134,6 +134,16 @@ const getAllRequests = async (req, res) => {
     if (!allRequests || allRequests.length === 0) {
       return res.status(404).json({ message: "No requests found" });
     }
+
+    const updatedRequest = await Promise.all(
+      allRequests.map(async (request) => {
+        const insurance = await Insurance.findById(request.insurance_id);
+        const insurance_name = insurance.insurance_name;
+        return {
+          ...request,
+        };
+      })
+    );
 
     res.status(200).json(allRequests);
   } catch (error) {
@@ -184,12 +194,10 @@ const acceptOrDeclineRequest = async (req, res) => {
     }
 
     res.status(200).json({ updatedRequest });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 //Not to be used Functions!!!!
 //Complete Appointment Function

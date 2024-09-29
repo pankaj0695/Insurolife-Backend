@@ -185,6 +185,7 @@ const createInsurance = async (req, res) => {
       return res.status(400).json({ message: "Insurance Already Exists" });
     }
     const insurance = await Insurance.create({
+      company_id,
       insurance_name,
       insurer,
       logo,
@@ -194,18 +195,20 @@ const createInsurance = async (req, res) => {
       description,
     });
     const insurance_id = insurance._id;
-    const hospital_ids = await Hospital.find();
-    if (hospital_ids.length === 0) {
+    const hospitals = await Hospital.find();
+    if (hospitals.length === 0) {
       return res.status(404).json({ message: "No Hospitals" });
     }
-    hospital_ids.map(async (hospital_id) => {
-      await Request.create({
-        hospital_id,
-        company_id,
-        insurance_id,
-        status: "Pending",
-      });
-    });
+    await Promise.all(
+      hospitals.map(async (hospital) => {
+        await Request.create({
+          hospital_id: hospital.hospital_id,
+          company_id,
+          insurance_id,
+          status: "Pending",
+        });
+      })
+    );
     res.status(200).json({ insurance });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -262,7 +265,7 @@ const allInsurances = async (req, res) => {
     if (insurances.length === 0) {
       return res.status(404).json({ message: "No Insurance Registered" });
     }
-    res.status(200).json(insurances);
+    res.status(200).json({ insurances });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -497,13 +500,11 @@ const getAllCounsellor = async (req, res) => {
   if (!company_id) {
     return res.status(404).json({ message: "Company Required" });
   }
-  const counsellor = await Counsellor.find({ company_id });
-  if (counsellor.length === 0) {
+  const counsellors = await Counsellor.find({ company_id });
+  if (counsellors.length === 0) {
     return res.status(404).json({ message: "No counsellors" });
   }
-  const insurer = await Company.findById(company_id);
-  const insurer_name = insurer.company_name;
-  res.status(200).json({ ...counsellor, insurer: insurer_name });
+  res.status(200).json({ counsellors });
 };
 
 module.exports = {
