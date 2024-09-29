@@ -129,11 +129,8 @@ const getAllRequests = async (req, res) => {
 
     const allRequests = await Request.find({
       hospital_id: hospital_id,
+      status: "Pending",
     }).sort({ createdAt: -1 });
-
-    if (!allRequests || allRequests.length === 0) {
-      return res.status(404).json({ message: "No requests found" });
-    }
 
     const updatedRequests = await Promise.all(
       allRequests.map(async (request) => {
