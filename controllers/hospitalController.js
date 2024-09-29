@@ -115,37 +115,38 @@ const getAllRequests = async (req, res) => {
   const { hospital_id } = req.body;
 
   try {
-    const hospital = await Hospital.findById(hospital_id);
+    // const hospital = await Hospital.findById(hospital_id);
 
-    if (!hospital) {
-      return res.status(404).json({ message: "Hospital not found" });
-    }
+    // if (!hospital) {
+    //   return res.status(404).json({ message: "Hospital not found" });
+    // }
 
-    if (!hospital.requests || hospital.requests.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No requests found in the request history" });
-    }
+    // if (!hospital.requests || hospital.requests.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "No requests found in the request history" });
+    // }
 
     const allRequests = await Request.find({
-      _id: { $in: hospital.requests },
+      hospital_id: hospital_id,
     }).sort({ createdAt: -1 });
 
     if (!allRequests || allRequests.length === 0) {
       return res.status(404).json({ message: "No requests found" });
     }
 
-    const updatedRequest = await Promise.all(
+    const updatedRequests = await Promise.all(
       allRequests.map(async (request) => {
         const insurance = await Insurance.findById(request.insurance_id);
         const insurance_name = insurance.insurance_name;
         return {
           ...request,
+          insurance_name,
         };
       })
     );
 
-    res.status(200).json(allRequests);
+    res.status(200).json(updatedRequests);
   } catch (error) {
     res
       .status(500)
@@ -175,11 +176,7 @@ const acceptOrDeclineRequest = async (req, res) => {
     }
 
     if (status === "Accepted") {
-      if (!hospital.insurance_id.includes(request.insurance_id)) {
-        hospital.insurance_id.push(request.insurance_id);
-      } else {
-        return res.status(400).json({ message: "Insurance already added" });
-      }
+      hospital.insurance_id.push(request.insurance_id);
     }
     await hospital.save();
 

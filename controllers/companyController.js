@@ -202,7 +202,7 @@ const createInsurance = async (req, res) => {
     await Promise.all(
       hospitals.map(async (hospital) => {
         await Request.create({
-          hospital_id: hospital.hospital_id,
+          hospital_id: hospital._id,
           company_id,
           insurance_id,
           status: "Pending",

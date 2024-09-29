@@ -14,6 +14,6 @@ router.post("/login", loginHospital);
 router.patch("/notifications", authenticateToken, acceptOrDeclineRequest);
 router.post("/get-requests", authenticateToken, getAllRequests);
 
-router.get("/get-insurances", authenticateToken, getInsurance);
+router.post("/get-insurances", authenticateToken, getInsurance);
 
 module.exports = router;
