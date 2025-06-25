@@ -1,20 +1,19 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 require("dotenv").config();
-const port = 4000;
-const MONGODB_URI =
-  "mongodb+srv://attardeayush:zHxtPZOgyoSouHGY@insurolife.mrj9r.mongodb.net/?retryWrites=true&w=majority&appName=Insurolife";
-const companyRoute = require("./routes/company.js");
-const hospitalRoute = require("./routes/hospital.js");
-const userRoute = require("./routes/user.js");
 
-const User = require("./models/userModel.js");
-const Hospital = require("./models/hospitalModel.js");
-const Company = require("./models/companyModel.js");
+const companyRoute = require("../routes/company.js");
+const hospitalRoute = require("../routes/hospital.js");
+const userRoute = require("../routes/user.js");
 
-const generateUploadURL = require("./helpers/s3.js");
+const User = require("../models/userModel.js");
+const Hospital = require("../models/hospitalModel.js");
+const Company = require("../models/companyModel.js");
+
+const generateUploadURL = require("../helpers/s3.js");
 
 app.use(express.json());
 app.use(
@@ -65,13 +64,19 @@ app.post("/s3url", async (req, res) => {
   res.send({ url });
 });
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`App Listening on the port ${port}`);
-    });
-  })
-  .catch(console.error(), () => {
-    console.log(Error);
-  });
+// Connect to DB only once (cache workaround for Vercel serverless)
+let isConnected = false;
+async function connectDB() {
+  if (!isConnected) {
+    await mongoose.connect(process.env.MONGODB_URI);
+    isConnected = true;
+  }
+}
+
+module.exports = {
+  app,
+  handler: async (req, res) => {
+    await connectDB();
+    return app(req, res);
+  },
+};
