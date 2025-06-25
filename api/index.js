@@ -18,7 +18,7 @@ const generateUploadURL = require("../helpers/s3.js");
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000", // or ['http://localhost:3000', 'https://your-production-site.com']
+    origin: ["http://localhost:3000", "https://insurolife.vercel.app"],
     credentials: false,
   })
 );
