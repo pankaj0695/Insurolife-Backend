@@ -73,10 +73,7 @@ async function connectDB() {
   }
 }
 
-module.exports = {
-  app,
-  handler: async (req, res) => {
-    await connectDB();
-    return app(req, res);
-  },
+module.exports = async (req, res) => {
+  await connectDB(); // must await DB connect before anything else
+  return app(req, res); // Express handles the route
 };
