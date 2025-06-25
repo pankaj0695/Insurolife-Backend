@@ -17,7 +17,12 @@ const Company = require("./models/companyModel.js");
 const generateUploadURL = require("./helpers/s3.js");
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // or ['http://localhost:3000', 'https://your-production-site.com']
+    credentials: true,
+  })
+);
 
 app.use("/customer", userRoute);
 app.use("/insurer", companyRoute);
